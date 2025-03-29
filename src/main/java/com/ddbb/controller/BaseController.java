@@ -9,4 +9,12 @@ public class BaseController {
         SUCCESS.put("resultCode",0);
         SUCCESS.put("msg","ok");
     }
+
+    public static JSONObject buildOk(Object data,String msg){
+        JSONObject json = new JSONObject();
+        json.put("resultCode",0);
+        json.put("msg",msg);
+        json.put("data",data);
+        return json;
+    }
 }
