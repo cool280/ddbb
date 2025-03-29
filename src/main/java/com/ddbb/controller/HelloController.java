@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @DdbbController("helloController")
-public class HelloController {
+public class HelloController extends BaseController{
     @GetMapping("/hi")
     public String hi(){
         return "hello world";

@@ -1,14 +1,23 @@
 package com.ddbb.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.ddbb.annotate.DdbbController;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @DdbbController
-public class LoginController {
-    @GetMapping("/hi")
-    public String hi(){
-        return "hello world";
+public class LoginController extends BaseController{
+    @PostMapping("/sendSmsCode")
+    @ResponseBody
+    public JSONObject sendSmsCode(String mobile){
+        return SUCCESS;
     }
+    @PostMapping("/login")
+    @ResponseBody
+    public JSONObject login(String mobile,String vCode){
+        return SUCCESS;
+    }
+
 }
