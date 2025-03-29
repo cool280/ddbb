@@ -6,6 +6,7 @@ import java.io.Serializable;
 
 @Data
 public class NearbyAssistantCoachResponse implements Serializable {
+    private Long qid;
     private String nickname;
     private Integer age;
     private String avatar;
@@ -14,7 +15,6 @@ public class NearbyAssistantCoachResponse implements Serializable {
     private String hometown;
     private String hobby;
     private String intro;
-    Double[] coordinate;
     /**
      * 台球挡位
      */

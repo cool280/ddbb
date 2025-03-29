@@ -5,6 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 @Data
 public class AssistantCoach implements Serializable {
+    private Long qid;
     private String nickname;
     private Integer age;
     private String avatar;
@@ -13,7 +14,7 @@ public class AssistantCoach implements Serializable {
     private String hometown;
     private String hobby;
     private String intro;
-    Double[] coordinate;
+    private Double[] coordinate;
     /**
      * 台球挡位
      */

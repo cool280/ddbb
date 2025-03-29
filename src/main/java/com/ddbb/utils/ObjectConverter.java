@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder;
 
 import java.util.Map;
 
-public class ObjectConerter {
+public class ObjectConverter {
     private static Gson GSON = null;
     static {
         GsonBuilder builder = new GsonBuilder();
