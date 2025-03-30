@@ -1,5 +1,10 @@
 server:
   port: 8080
+  ssl:
+    key-store: classpath:ddbb365.com.jks
+    key-store-type: JKS
+    key-store-password: ia2s684z
+    client-auth: none
 
 spring:
   data:

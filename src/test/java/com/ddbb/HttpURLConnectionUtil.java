@@ -8,6 +8,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class HttpURLConnectionUtil {
+    private static String myLocal = "http://127.0.0.1:8080";
+    private static String ali = "http://8.153.202.62:8080";
+
+
     /**
      * http get请求
      * @param httpUrl 链接
@@ -155,9 +159,7 @@ public class HttpURLConnectionUtil {
     }
 
     public static void main(String[] args) {
-        String url = "http://127.0.0.1:8080";
-
-        url = url + "/nearby/hall";
+        String uri = "/nearby/hall";
 
         JSONObject param = new JSONObject();
         param.put("qid",123);
@@ -167,7 +169,7 @@ public class HttpURLConnectionUtil {
         param.put("maxDistanceKm",123);
         param.put("maxCount",30);
 
-        String ret = doPost(url,param.toJSONString());
+        String ret = doPost(ali+uri,param.toJSONString());
         System.out.println("=================== api returns: ===================");
         System.out.println(""+ret);
     }
