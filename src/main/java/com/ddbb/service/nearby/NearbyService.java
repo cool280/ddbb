@@ -6,6 +6,7 @@ import com.ddbb.mongo.GeoQueryContext;
 import com.ddbb.mongo.HallRepo;
 import com.ddbb.mongo.entity.AssistantCoach;
 import com.ddbb.mongo.entity.Hall;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.GeoResult;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Slf4j
 public class NearbyService {
     //杨浦百联滨江
     private static double DEFAULT_LONGITUDE = 121.544732;
