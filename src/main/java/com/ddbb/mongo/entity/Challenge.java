@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.util.Date;
 
 @Data
 public class Challenge extends MongoEntity implements Serializable {
@@ -18,7 +19,7 @@ public class Challenge extends MongoEntity implements Serializable {
      * 球房id
      */
     private Long hallId;
-    private String challengeDate;
+    private Date challengeDate;
     private Integer startTime;
     private Integer endTime;
 

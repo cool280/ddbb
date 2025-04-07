@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class MongoEntity {
-    protected Long id;
+    protected Long aid;
     protected Long createTime;
     protected Long updateTime;
 }

@@ -8,11 +8,12 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.NearQuery;
 import org.springframework.data.mongodb.core.query.Query;
 
+import javax.annotation.Resource;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
 public abstract class MongoBaseRepository<T> {
-    @Autowired
+    @Resource
     protected MongoTemplate mongoTemplate;
 
     public abstract String getCollectionName();

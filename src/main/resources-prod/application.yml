@@ -1,0 +1,14 @@
+server:
+  port: 8080
+  ssl:
+    key-store: classpath:ddbb365.com.jks
+    key-store-type: JKS
+    key-store-password: ia2s684z
+    client-auth: none
+
+spring:
+  data:
+    mongodb:
+      database: ddbb
+      host: 127.0.0.1
+      port: 27017
