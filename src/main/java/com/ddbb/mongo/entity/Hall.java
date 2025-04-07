@@ -1,11 +1,15 @@
 package com.ddbb.mongo.entity;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.io.Serializable;
 
 @Data
-public class Hall implements Serializable {
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+public class Hall extends MongoEntity implements Serializable {
     /**
      * 球房id
      */

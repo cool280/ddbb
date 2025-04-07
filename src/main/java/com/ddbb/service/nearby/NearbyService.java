@@ -1,9 +1,9 @@
 package com.ddbb.service.nearby;
 
 import com.ddbb.controller.request.*;
-import com.ddbb.mongo.AssistantCoachRepo;
+import com.ddbb.mongo.repo.AssistantCoachRepo;
 import com.ddbb.mongo.GeoQueryContext;
-import com.ddbb.mongo.HallRepo;
+import com.ddbb.mongo.repo.HallRepo;
 import com.ddbb.mongo.entity.AssistantCoach;
 import com.ddbb.mongo.entity.Hall;
 import lombok.extern.slf4j.Slf4j;

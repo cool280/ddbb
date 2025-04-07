@@ -1,5 +1,6 @@
-package com.ddbb.mongo;
+package com.ddbb.mongo.repo;
 
+import com.ddbb.mongo.MongoBaseRepository;
 import com.ddbb.mongo.entity.AssistantCoach;
 import org.springframework.stereotype.Repository;
 
@@ -8,7 +9,7 @@ import org.springframework.stereotype.Repository;
  db.user.createIndex({"qid":1},{"name":"uk_qid",unique: true,"background":true})
  */
 @Repository
-public class AssistantCoachRepo extends MongoBaseRepository<AssistantCoach>{
+public class AssistantCoachRepo extends MongoBaseRepository<AssistantCoach> {
     @Override
     public String getCollectionName() {
         return "user";

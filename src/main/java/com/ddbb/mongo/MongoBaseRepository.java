@@ -2,7 +2,6 @@ package com.ddbb.mongo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.GeoResults;
-import org.springframework.data.geo.Metric;
 import org.springframework.data.geo.Metrics;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -20,6 +19,12 @@ public abstract class MongoBaseRepository<T> {
 
     public void insert(T object){
         mongoTemplate.insert(object,getCollectionName());
+    }
+    public void delete(Criteria criteria){
+        delete(new Query(criteria));
+    }
+    public void delete(Query query){
+        mongoTemplate.remove(query,getCollectionName());
     }
 
     public T findOne(Criteria criteria){

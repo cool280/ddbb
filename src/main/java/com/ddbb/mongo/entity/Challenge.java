@@ -1,0 +1,25 @@
+package com.ddbb.mongo.entity;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
+import java.io.Serializable;
+
+@Data
+public class Challenge extends MongoEntity implements Serializable {
+    /**
+     * 一张挑战书生成两条记录，owner分别 = from和to，其他字段都一样
+     */
+    private Long owner;
+    private Long from;
+    private Long to;
+    /**
+     * 球房id
+     */
+    private Long hallId;
+    private String challengeDate;
+    private Integer startTime;
+    private Integer endTime;
+
+}

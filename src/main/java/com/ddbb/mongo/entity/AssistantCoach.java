@@ -1,10 +1,14 @@
 package com.ddbb.mongo.entity;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.io.Serializable;
 @Data
-public class AssistantCoach implements Serializable {
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+public class AssistantCoach extends MongoEntity implements Serializable {
     private Long qid;
     private String nickname;
     private Integer age;
