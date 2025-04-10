@@ -3,6 +3,7 @@ package com.ddbb.service.challenge;
 import com.ddbb.controller.request.LaunchChallengeRequest;
 import com.ddbb.mongo.entity.Challenge;
 import com.ddbb.mongo.repo.ChallengeRepo;
+import com.ddbb.utils.SnowflakeIdUtil;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +23,13 @@ public class ChallengeService {
      * @param request
      */
     public void launchChallenge(LaunchChallengeRequest request) throws ParseException {
-        Date challengeDate = DateUtils.parseDate(request.getChallengeDateStr(),"yyyy-MM-dd");
+        Date challengeDate = DateUtils.parseDate(request.getChallengeDateStr()+" 08:00:00","yyyy-MM-dd HH:mm:ss");
         long now = System.currentTimeMillis();
+        String challengeId = "ch_"+SnowflakeIdUtil.getInstance().nextId();
 
         Challenge from = new Challenge();
+        from.setAid(SnowflakeIdUtil.getInstance().nextId());
+        from.setChallengeId(challengeId);
         from.setOwner(request.getFrom());
         from.setFrom(request.getFrom());
         from.setTo(request.getTo());
@@ -39,6 +43,8 @@ public class ChallengeService {
         Challenge to = new Challenge();
         BeanUtils.copyProperties(from,to);
         to.setOwner(request.getTo());
+        to.setAid(SnowflakeIdUtil.getInstance().nextId());
+
 
         challengeRepo.insert(from);
         challengeRepo.insert(to);

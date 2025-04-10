@@ -36,10 +36,10 @@ public class ChallengeController extends BaseController {
             int startTime = request.getStartTime();
             int endTime = request.getEndTime();
             if(!(startTime >=0 && startTime<=23)){
-                return buildResult(-1,"startTime must be in [0,23]");
+                return buildResult(-1,"startTime must be in range [0,23]");
             }
             if(!(endTime >=1 && startTime<=24)){
-                return buildResult(-1,"endTime must be in [1,24]");
+                return buildResult(-1,"endTime must be in range [1,24]");
             }
             if(endTime <= startTime){
                 return buildResult(-1,"endTime must > startTime");

@@ -13,6 +13,10 @@ public class Challenge extends MongoEntity implements Serializable {
      * 一张挑战书生成两条记录，owner分别 = from和to，其他字段都一样
      */
     private Long owner;
+    /**
+     * 挑战书id
+     */
+    private String challengeId;
     private Long from;
     private Long to;
     /**
