@@ -12,4 +12,8 @@ public class ChallengeConfig {
      * 最多可预约到几天后对战
      */
     private Integer afterDays;
+    /**
+     * 助教是否可以发起挑战
+     */
+    private Boolean assistantCoachAllowLaunch;
 }

@@ -1,6 +1,7 @@
 package com.ddbb.service.challenge;
 
 import com.ddbb.controller.request.LaunchChallengeRequest;
+import com.ddbb.enums.ChallengeRole;
 import com.ddbb.enums.ChallengeStatus;
 import com.ddbb.mongo.entity.Challenge;
 import com.ddbb.mongo.entity.Hall;
@@ -52,7 +53,6 @@ public class ChallengeService {
      * @throws ParseException
      */
     private void createChallengeRecord(LaunchChallengeRequest request)throws ParseException{
-        Date challengeDate = DateUtils.parseDate(request.getChallengeDateStr()+" 08:00:00","yyyy-MM-dd HH:mm:ss");
         long now = System.currentTimeMillis();
         String challengeId = "ch_"+SnowflakeIdUtil.getInstance().nextId();
 
@@ -62,18 +62,22 @@ public class ChallengeService {
         from.setOwner(request.getFrom());
         from.setFrom(request.getFrom());
         from.setTo(request.getTo());
-        from.setChallengeDate(challengeDate);
+        from.setChallengeDateStr(request.getChallengeDateStr());
+        from.setChallengeDateInt(Integer.valueOf(request.getChallengeDateStr().replace("-","")));
         from.setEndTime(request.getEndTime());
         from.setHallId(request.getHallId());
         from.setStartTime(request.getStartTime());
         from.setCreateTime(now);
         from.setUpdateTime(now);
         from.setStatus(ChallengeStatus.INIT.getCode());
+        from.setChallengeRole(ChallengeRole.LAUNCH.getCode());
 
         Challenge to = new Challenge();
         BeanUtils.copyProperties(from,to);
         to.setOwner(request.getTo());
         to.setAid(SnowflakeIdUtil.getInstance().nextId());
+        to.setChallengeRole(ChallengeRole.RECEIVE.getCode());
+
 
 
         challengeRepo.insert(from);

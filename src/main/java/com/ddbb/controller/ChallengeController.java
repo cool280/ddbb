@@ -32,6 +32,8 @@ public class ChallengeController extends BaseController {
     private UserRepo userRepo;
     @Autowired
     private ChallengeKit challengeKit;
+    @Autowired
+    private ChallengeConfig challengeConfig;
 
     /**
      * 发起挑战
@@ -46,13 +48,18 @@ public class ChallengeController extends BaseController {
             //0. 身份校验
             User from = userRepo.findByQid(request.getFrom());
             if(from.getUserType() == UserType.ASSISTANT_COACH.getCode()){
-                return ERROR("助教不可发起挑战");
+                if(!challengeConfig.getAssistantCoachAllowLaunch()){
+                    return ERROR("助教不可发起挑战");
+                }
             }
             //1. 参数校验
             if(request.getFrom() == null || request.getTo() == null || request.getHallId()==null||
                     request.getStartTime()==null||request.getEndTime()==null||
                     StringUtils.isBlank(request.getChallengeDateStr())){
                 return ERROR("param error");
+            }
+            if(request.getFrom().equals(request.getTo())){
+                return ERROR("不能挑战自己");
             }
             int startTime = request.getStartTime();
             int endTime = request.getEndTime();
@@ -82,9 +89,17 @@ public class ChallengeController extends BaseController {
                 return ERROR("开始时间不能超过后天的23点");
             }
 
-            //3. 校验to在该时段是否空闲
-
-            //4. 发起挑战
+            //3. 校验from在该时段是否空闲
+            boolean isFromFree = challengeKit.isFree(request.getFrom(),request.getChallengeDateStr(),request.getStartTime(),request.getEndTime());
+            if(!isFromFree){
+                return ERROR("您自己所选的时间段内已经有其他安排，请换个时间");
+            }
+            //4. 检验to在该时段是否空闲
+            boolean isToFree = challengeKit.isFree(request.getTo(),request.getChallengeDateStr(),request.getStartTime(),request.getEndTime());
+            if(!isToFree){
+                return ERROR("该助教在您所选的时间段内已经有其他安排，请换个时间");
+            }
+            //5. 发起挑战
             if(challengeService.launchChallenge(request)){
                 return OK;
             }
@@ -94,6 +109,17 @@ public class ChallengeController extends BaseController {
             return ERROR;
         }
 
+    }
+
+    /**
+     * 获取某人的行程表，从今天开始
+     * @param request
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/getSomeoneSchedule")
+    public JSONObject getSomeoneSchedule(@RequestBody LaunchChallengeRequest request){
+        return null;
     }
 
     public static void main(String[] args) {

@@ -1,4 +1,4 @@
-package com.ddbb;
+package com.ddbb.test;
 
 import com.alibaba.fastjson.JSONObject;
 

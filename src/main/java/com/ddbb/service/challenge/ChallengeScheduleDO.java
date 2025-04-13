@@ -2,6 +2,7 @@ package com.ddbb.service.challenge;
 
 import lombok.Data;
 
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -12,5 +13,5 @@ public class ChallengeScheduleDO {
     private String dateDesc;
     //周几
     private Integer week;
-    private Map<Integer,Integer> hourMap;
+    private List<HourDO> hourList;
 }

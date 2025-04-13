@@ -23,9 +23,14 @@ public class Challenge extends MongoEntity implements Serializable {
      * 球房id
      */
     private Long hallId;
-    private Date challengeDate;
+    private String challengeDateStr;
+    private Integer challengeDateInt;
     private Integer startTime;
     private Integer endTime;
     private Integer status;
+    /**
+     * 动作：1 - 发起，2 - 接受
+     */
+    private Integer challengeRole;
 
 }

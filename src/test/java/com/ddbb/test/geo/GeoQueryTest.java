@@ -1,4 +1,4 @@
-package com.ddbb.geo;
+package com.ddbb.test.geo;
 
 import com.ddbb.controller.request.NearbyAssistantCoachRequest;
 import com.ddbb.controller.request.NearbyAssistantCoachResponse;

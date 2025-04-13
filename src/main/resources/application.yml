@@ -14,3 +14,5 @@ ddbb:
   challenge:
     #最多可预约到几天后对战
     afterDays: 2
+    #助教是否可以发起挑战
+    assistantCoachAllowLaunch: false

@@ -23,7 +23,7 @@ public class DateUtilPlus {
      * 返回当前日期: 2025-04-12
      * @return
      */
-    public static String getCurrentDateTimeString(){
+    public static String getCurrentDateString(){
         return LocalDateTime.now().format(DATE_FORMATTER);
     }
     /**
@@ -37,8 +37,17 @@ public class DateUtilPlus {
      * 返回当前日期 + 时间: 2025-04-12 11:29:13
      * @return
      */
-    public static String getCurrentDateString(){
+    public static String getCurrentDateTimeString(){
         return LocalDateTime.now().format(DATE_TIME_FORMATTER);
+    }
+
+    /**
+     * 返回年月日组成的int：20250321
+     * @return
+     */
+    public static int getCurrentDateInt(){
+        String s = getCurrentDateString();
+        return Integer.parseInt(s.replace("-",""));
     }
 
     /**
