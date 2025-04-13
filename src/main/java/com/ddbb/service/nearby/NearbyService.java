@@ -1,10 +1,10 @@
 package com.ddbb.service.nearby;
 
 import com.ddbb.controller.request.*;
-import com.ddbb.mongo.repo.AssistantCoachRepo;
+import com.ddbb.mongo.repo.UserRepo;
 import com.ddbb.mongo.GeoQueryContext;
 import com.ddbb.mongo.repo.HallRepo;
-import com.ddbb.mongo.entity.AssistantCoach;
+import com.ddbb.mongo.entity.User;
 import com.ddbb.mongo.entity.Hall;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -24,7 +24,7 @@ public class NearbyService {
     private static double DEFAULT_LATITUDE = 31.271186;
 
     @Autowired
-    private AssistantCoachRepo repo;
+    private UserRepo repo;
     @Autowired
     private HallRepo hallRepo;
 
@@ -34,13 +34,13 @@ public class NearbyService {
      * @return
      */
     public List<NearbyAssistantCoachResponse> getNearbyAssistantCoach(NearbyAssistantCoachRequest nearbyRequest) {
-        GeoResults<AssistantCoach> geoResults = repo.geoQuery(checkParam(nearbyRequest));
+        GeoResults<User> geoResults = repo.geoQuery(checkParam(nearbyRequest));
 
         List<NearbyAssistantCoachResponse> ret = new ArrayList<>();
         if (geoResults != null) {
-            List<GeoResult<AssistantCoach>> content = geoResults.getContent();
+            List<GeoResult<User>> content = geoResults.getContent();
             content.forEach(e -> {
-                AssistantCoach coach = e.getContent();
+                User coach = e.getContent();
                 double distance = e.getDistance().getValue();
 
                 NearbyAssistantCoachResponse r = new NearbyAssistantCoachResponse();

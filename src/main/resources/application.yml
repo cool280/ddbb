@@ -9,3 +9,8 @@ spring:
       port: 27017
 cbs:
   imagesPath: file:/D:/images/
+
+ddbb:
+  challenge:
+    #最多可预约到几天后对战
+    afterDays: 2

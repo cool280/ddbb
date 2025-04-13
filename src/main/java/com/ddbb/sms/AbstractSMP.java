@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.ddbb.utils.OkHttpUtil;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -45,7 +46,11 @@ public abstract class AbstractSMP {
      * @date 2014-6-18 下午12:57:49
      */
     protected abstract JSONObject disposeReturnVal(Object ret);
-
+    public final JSONObject sendMsg(String content, String phone) throws Exception {
+        List<String> list = new ArrayList<>();
+        list.add(phone);
+        return sendMsg(content,list);
+    }
     /**
      * TODO	发送短信
      */

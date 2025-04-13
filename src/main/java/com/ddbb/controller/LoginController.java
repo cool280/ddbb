@@ -14,12 +14,12 @@ public class LoginController extends BaseController{
     @PostMapping("/sendSmsCode")
     @ResponseBody
     public JSONObject sendSmsCode(String mobile){
-        return SUCCESS;
+        return OK;
     }
     @PostMapping("/doLogin")
     @ResponseBody
     public JSONObject login(String mobile,String vCode){
-        return SUCCESS;
+        return OK;
     }
 
 }

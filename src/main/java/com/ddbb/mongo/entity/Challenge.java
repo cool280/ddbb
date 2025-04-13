@@ -26,5 +26,6 @@ public class Challenge extends MongoEntity implements Serializable {
     private Date challengeDate;
     private Integer startTime;
     private Integer endTime;
+    private Integer status;
 
 }

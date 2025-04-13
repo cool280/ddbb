@@ -8,8 +8,9 @@ import java.io.Serializable;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class AssistantCoach extends MongoEntity implements Serializable {
+public class User extends MongoEntity implements Serializable {
     private Long qid;
+    private String phone;
     private String nickname;
     private Integer age;
     private String avatar;
@@ -36,4 +37,16 @@ public class AssistantCoach extends MongoEntity implements Serializable {
      * 助教价格  元/时
      */
     private Double price;
+    /**
+     * 每天可约开始时间
+     */
+    private Integer workTimeStart;
+    /**
+     * 每天可约结束时间
+     */
+    private Integer workTimeEnd;
+    /**
+     * 用户类型：1 - 助教，2 - 普通用户
+     */
+    private Integer userType;
 }

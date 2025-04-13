@@ -1,8 +1,9 @@
 package com.ddbb.mongo.repo;
 
 import com.ddbb.mongo.MongoBaseRepository;
-import com.ddbb.mongo.entity.AssistantCoach;
 import com.ddbb.mongo.entity.Hall;
+import com.ddbb.mongo.entity.User;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Repository;
 /**
  db.hall.createIndex({"coordinate":"2dsphere"},{"name":"idx_coordinate_2dsphere","background":true})
@@ -13,5 +14,14 @@ public class HallRepo extends MongoBaseRepository<Hall> {
     @Override
     public String getCollectionName() {
         return "hall";
+    }
+    /**
+     * 根据hallId查球房
+     * @param hallId
+     * @return
+     */
+    public Hall findByHallId(Long hallId){
+        Criteria criteria = Criteria.where("hallId").is(hallId);
+        return findOne(criteria);
     }
 }
