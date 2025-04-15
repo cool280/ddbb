@@ -1,7 +1,7 @@
 package com.ddbb.mongo.repo;
 
 import com.ddbb.mongo.MongoBaseRepository;
-import com.ddbb.mongo.entity.User;
+import com.ddbb.mongo.entity.UserEntity;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Repository;
 
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
  db.user.createIndex({"qid":1},{"name":"uk_qid",unique: true,"background":true})
  */
 @Repository
-public class UserRepo extends MongoBaseRepository<User> {
+public class UserRepo extends MongoBaseRepository<UserEntity> {
     @Override
     public String getCollectionName() {
         return "user";
@@ -21,7 +21,7 @@ public class UserRepo extends MongoBaseRepository<User> {
      * @param qid
      * @return
      */
-    public User findByQid(Long qid){
+    public UserEntity findByQid(Long qid){
         Criteria criteria = Criteria.where("qid").is(qid);
         return findOne(criteria);
     }

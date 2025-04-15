@@ -1,6 +1,6 @@
 package com.ddbb.test.challenge;
 
-import com.ddbb.mongo.entity.Challenge;
+import com.ddbb.mongo.entity.ChallengeEntity;
 import com.ddbb.utils.ObjectConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -20,7 +20,7 @@ public class ChallengeRepoTest {
 
     @Test
     public void testAllChallengeByDate(){
-        List<Challenge> allChallengeByDate = challengeRepo.getAllChallengeByDate(134L, "2025-04-13");
+        List<ChallengeEntity> allChallengeByDate = challengeRepo.getAllChallengeByDate(134L, "2025-04-13");
         System.out.println(allChallengeByDate.size()+" records: "+ObjectConverter.o2s(allChallengeByDate));
 
         allChallengeByDate = challengeRepo.getAllChallengeByDate(176L, "2025-04-11");
@@ -29,7 +29,7 @@ public class ChallengeRepoTest {
 
     @Test
     public void testChallengeByDate(){
-        List<Challenge> list = challengeRepo.getLaunchedChallengeByDate(176L, "2025-04-11");
+        List<ChallengeEntity> list = challengeRepo.getLaunchedChallengeByDate(176L, "2025-04-11");
         System.out.println(list.size()+" records: "+ObjectConverter.o2s(list));
 
         list = challengeRepo.getReceivedChallengeByDate(134L, "2025-04-13");
@@ -38,7 +38,7 @@ public class ChallengeRepoTest {
 
     @Test
     public void testAllTodayAndAfterChallenge(){
-        List<Challenge> list = challengeRepo.getAllTodayAndAfterChallenge(134L);
+        List<ChallengeEntity> list = challengeRepo.getAllTodayAndAfterChallenge(134L);
         System.out.println(list.size()+" records: "+ObjectConverter.o2s(list));
 
         list = challengeRepo.getAllTodayAndAfterChallenge(176L);
@@ -47,7 +47,7 @@ public class ChallengeRepoTest {
 
     @Test
     public void testTodayAndAfterChallenge(){
-        List<Challenge> list = challengeRepo.getReceivedTodayAndAfterChallenge(134L);
+        List<ChallengeEntity> list = challengeRepo.getReceivedTodayAndAfterChallenge(134L);
         System.out.println(list.size()+" records: "+ObjectConverter.o2s(list));
 
         list = challengeRepo.getLaunchedTodayAndAfterChallenge(176L);

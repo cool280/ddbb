@@ -16,3 +16,7 @@ ddbb:
     afterDays: 2
     #助教是否可以发起挑战
     assistantCoachAllowLaunch: false
+    #默认上班时间
+    defaultWorkTimeStart: 14
+    #默认下班时间
+    defaultWorkTimeEnd: 22

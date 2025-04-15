@@ -4,8 +4,8 @@ import com.ddbb.controller.request.*;
 import com.ddbb.mongo.repo.UserRepo;
 import com.ddbb.mongo.GeoQueryContext;
 import com.ddbb.mongo.repo.HallRepo;
-import com.ddbb.mongo.entity.User;
-import com.ddbb.mongo.entity.Hall;
+import com.ddbb.mongo.entity.UserEntity;
+import com.ddbb.mongo.entity.HallEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,13 +34,13 @@ public class NearbyService {
      * @return
      */
     public List<NearbyAssistantCoachResponse> getNearbyAssistantCoach(NearbyAssistantCoachRequest nearbyRequest) {
-        GeoResults<User> geoResults = repo.geoQuery(checkParam(nearbyRequest));
+        GeoResults<UserEntity> geoResults = repo.geoQuery(checkParam(nearbyRequest));
 
         List<NearbyAssistantCoachResponse> ret = new ArrayList<>();
         if (geoResults != null) {
-            List<GeoResult<User>> content = geoResults.getContent();
+            List<GeoResult<UserEntity>> content = geoResults.getContent();
             content.forEach(e -> {
-                User coach = e.getContent();
+                UserEntity coach = e.getContent();
                 double distance = e.getDistance().getValue();
 
                 NearbyAssistantCoachResponse r = new NearbyAssistantCoachResponse();
@@ -57,13 +57,13 @@ public class NearbyService {
      * @return
      */
     public List<NearbyHallResponse> getNearbyHall(NearbyHallRequest nearbyRequest) {
-        GeoResults<Hall> geoResults = hallRepo.geoQuery(checkParam(nearbyRequest));
+        GeoResults<HallEntity> geoResults = hallRepo.geoQuery(checkParam(nearbyRequest));
 
         List<NearbyHallResponse> ret = new ArrayList<>();
         if (geoResults != null) {
-            List<GeoResult<Hall>> content = geoResults.getContent();
+            List<GeoResult<HallEntity>> content = geoResults.getContent();
             content.forEach(e -> {
-                Hall hall = e.getContent();
+                HallEntity hall = e.getContent();
                 double distance = e.getDistance().getValue();
 
                 NearbyHallResponse r = new NearbyHallResponse();

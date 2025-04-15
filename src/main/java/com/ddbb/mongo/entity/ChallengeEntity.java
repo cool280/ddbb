@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class Challenge extends MongoEntity implements Serializable {
+public class ChallengeEntity extends MongoEntity implements Serializable {
     /**
      * 一张挑战书生成两条记录，owner分别 = from和to，其他字段都一样
      */

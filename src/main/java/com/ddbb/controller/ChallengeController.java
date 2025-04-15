@@ -2,24 +2,29 @@ package com.ddbb.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ddbb.annotate.DdbbController;
-import com.ddbb.config.ChallengeConfig;
+import com.ddbb.service.challenge.ChallengeConfig;
 import com.ddbb.controller.request.*;
 import com.ddbb.enums.UserType;
-import com.ddbb.mongo.entity.User;
+import com.ddbb.mongo.entity.UserEntity;
 import com.ddbb.mongo.repo.UserRepo;
 import com.ddbb.service.challenge.ChallengeKit;
+import com.ddbb.service.challenge.ChallengeScheduleDO;
 import com.ddbb.service.challenge.ChallengeService;
+import com.ddbb.service.hall.WorkplaceVO;
+import com.ddbb.service.user.UserVO;
 import com.ddbb.utils.DateUtilPlus;
 import com.ddbb.utils.ObjectConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @DdbbController
@@ -34,7 +39,42 @@ public class ChallengeController extends BaseController {
     private ChallengeKit challengeKit;
     @Autowired
     private ChallengeConfig challengeConfig;
+    /**
+     * 发起挑战前的数据准备
+     * @param request
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/prepareChallenge")
+    public JSONObject prepareChallenge(@RequestBody ChallengeRequest request){
+        log.info("[prepareChallenge] >>> start: {}", ObjectConverter.o2s(request));
+        JSONObject data = new JSONObject();
+        try{
+            //1. 参数校验
+            Long to = request.getTo();
+            if(to == null){
+                return ERROR("to cannot be null");
+            }
+            UserEntity userInfo = userRepo.findByQid(to);
+            UserVO userVO = new UserVO();
+            BeanUtils.copyProperties(userInfo,userVO);
 
+            Map<String, ChallengeScheduleDO> schedule = challengeKit.getSchedule(to);
+
+            List<WorkplaceVO> workplaceList = challengeKit.getSomeoneWorkplace(to);
+
+
+            data.put("userInfo",userVO);
+            data.put("schedule",schedule);
+            data.put("workplace",workplaceList);
+            data.put("message",ChallengeConfig.CHALLENGE_MESSAGE_MAP);
+            return OK(data);
+        }catch (Exception e){
+            log.error("[launchChallenge] with error:{}",e.getMessage(),e);
+            return ERROR;
+        }
+
+    }
     /**
      * 发起挑战
      * @param request
@@ -42,11 +82,11 @@ public class ChallengeController extends BaseController {
      */
     @ResponseBody
     @PostMapping("/launchChallenge")
-    public JSONObject launchChallenge(@RequestBody LaunchChallengeRequest request){
+    public JSONObject launchChallenge(@RequestBody ChallengeRequest request){
         log.info("[launchChallenge] >>> start: {}", ObjectConverter.o2s(request));
         try{
             //0. 身份校验
-            User from = userRepo.findByQid(request.getFrom());
+            UserEntity from = userRepo.findByQid(request.getFrom());
             if(from.getUserType() == UserType.ASSISTANT_COACH.getCode()){
                 if(!challengeConfig.getAssistantCoachAllowLaunch()){
                     return ERROR("助教不可发起挑战");
@@ -83,7 +123,7 @@ public class ChallengeController extends BaseController {
             LocalDateTime startFromRequest = DateUtilPlus.string2LocalDateTime(request.getChallengeDateStr()+" "+ StringUtils.leftPad(request.getStartTime().toString(),2,"0")+":00:00");
             Pair<LocalDateTime, LocalDateTime> availableOrderTime = challengeKit.getAvailableOrderTime();
             if(startFromRequest.isBefore(availableOrderTime.getLeft())){
-                return ERROR("开始时间必须为下一个整点小时");
+                return ERROR("开始时间最早必须为下一个整点小时");
             }
             if(startFromRequest.isAfter(availableOrderTime.getRight())){
                 return ERROR("开始时间不能超过后天的23点");
@@ -112,16 +152,93 @@ public class ChallengeController extends BaseController {
     }
 
     /**
-     * 获取某人的行程表，从今天开始
+     * 获取某人的行程表，从今天开始。qid放在from或to字段都可以，from优先
      * @param request
      * @return
      */
     @ResponseBody
     @PostMapping("/getSomeoneSchedule")
-    public JSONObject getSomeoneSchedule(@RequestBody LaunchChallengeRequest request){
-        return null;
+    public JSONObject getSomeoneSchedule(@RequestBody ChallengeRequest request){
+        log.info("[getSomeoneSchedule] >>> start: {}", ObjectConverter.o2s(request));
+        try{
+            Long qid = request.getQid();
+            Map<String, ChallengeScheduleDO> map = challengeKit.getSchedule(qid);
+            return OK(map);
+        }catch (Exception e){
+            log.error("[getSomeoneSchedule] with error:{}",e.getMessage(),e);
+            return ERROR;
+        }
+    }
+    /**
+     * 获取某人的可出台球房
+     * @param request
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/getSomeoneWorkplace")
+    public JSONObject getSomeoneWorkplace(@RequestBody ChallengeRequest request){
+        log.info("[getSomeoneWorkplace] >>> start: {}", ObjectConverter.o2s(request));
+        try{
+            Long qid = request.getQid();
+            List<WorkplaceVO> list = challengeKit.getSomeoneWorkplace(qid);
+            return OK(list);
+        }catch (Exception e){
+            log.error("[getSomeoneWorkplace] with error:{}",e.getMessage(),e);
+            return ERROR;
+        }
     }
 
+
+    /**
+     * 接受挑战
+     * @param request
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/acceptChallenge")
+    public JSONObject acceptChallenge(@RequestBody ChallengeRequest request){
+        log.info("[acceptChallenge] >>> start: {}", ObjectConverter.o2s(request));
+        try{
+            Long qid = request.getQid();
+            String challengeId = request.getChallengeId();
+            if(qid == null || StringUtils.isBlank(challengeId)){
+                return ERROR("param error");
+            }
+            Pair<Boolean,String> p = challengeService.acceptChallenge(request);
+            if(p.getLeft()){
+                return OK(null,"您已接受挑战，请按时赴约");
+            }
+            return ERROR(p.getRight());
+        }catch (Exception e){
+            log.error("[acceptChallenge] with error:{}",e.getMessage(),e);
+            return ERROR;
+        }
+    }
+    /**
+     * 接受挑战
+     * @param request
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/refuseChallenge")
+    public JSONObject refuseChallenge(@RequestBody ChallengeRequest request){
+        log.info("[refuseChallenge] >>> start: {}", ObjectConverter.o2s(request));
+        try{
+            Long qid = request.getQid();
+            String challengeId = request.getChallengeId();
+            if(qid == null || StringUtils.isBlank(challengeId)){
+                return ERROR("param error");
+            }
+            Pair<Boolean,String> p = challengeService.refuseChallenge(request);
+            if(p.getLeft()){
+                return OK("您已拒绝改挑战");
+            }
+            return ERROR(p.getRight());
+        }catch (Exception e){
+            log.error("[refuseChallenge] with error:{}",e.getMessage(),e);
+            return ERROR;
+        }
+    }
     public static void main(String[] args) {
         //拿到今天的下一个整点
         LocalDateTime min = LocalDateTime.now().with(LocalTime.of(DateUtilPlus.getNextHour(), 0,0));

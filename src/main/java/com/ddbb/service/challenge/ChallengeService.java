@@ -1,24 +1,23 @@
 package com.ddbb.service.challenge;
 
-import com.ddbb.controller.request.LaunchChallengeRequest;
+import com.ddbb.controller.request.ChallengeRequest;
 import com.ddbb.enums.ChallengeRole;
 import com.ddbb.enums.ChallengeStatus;
-import com.ddbb.mongo.entity.Challenge;
-import com.ddbb.mongo.entity.Hall;
-import com.ddbb.mongo.entity.User;
+import com.ddbb.mongo.entity.ChallengeEntity;
+import com.ddbb.mongo.entity.HallEntity;
+import com.ddbb.mongo.entity.UserEntity;
 import com.ddbb.mongo.repo.ChallengeRepo;
 import com.ddbb.mongo.repo.HallRepo;
 import com.ddbb.mongo.repo.UserRepo;
 import com.ddbb.sms.Sioo;
 import com.ddbb.utils.SnowflakeIdUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.time.DateUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
-import java.util.Date;
 
 @Service
 @Slf4j
@@ -35,7 +34,7 @@ public class ChallengeService {
      * 发起挑战
      * @param request
      */
-    public boolean launchChallenge(LaunchChallengeRequest request)  {
+    public boolean launchChallenge(ChallengeRequest request)  {
         try {
             createChallengeRecord(request);
             sendSms(request);
@@ -52,11 +51,11 @@ public class ChallengeService {
      * @param request
      * @throws ParseException
      */
-    private void createChallengeRecord(LaunchChallengeRequest request)throws ParseException{
+    private void createChallengeRecord(ChallengeRequest request)throws ParseException{
         long now = System.currentTimeMillis();
         String challengeId = "ch_"+SnowflakeIdUtil.getInstance().nextId();
 
-        Challenge from = new Challenge();
+        ChallengeEntity from = new ChallengeEntity();
         from.setAid(SnowflakeIdUtil.getInstance().nextId());
         from.setChallengeId(challengeId);
         from.setOwner(request.getFrom());
@@ -72,7 +71,7 @@ public class ChallengeService {
         from.setStatus(ChallengeStatus.INIT.getCode());
         from.setChallengeRole(ChallengeRole.LAUNCH.getCode());
 
-        Challenge to = new Challenge();
+        ChallengeEntity to = new ChallengeEntity();
         BeanUtils.copyProperties(from,to);
         to.setOwner(request.getTo());
         to.setAid(SnowflakeIdUtil.getInstance().nextId());
@@ -89,15 +88,15 @@ public class ChallengeService {
      * 给被挑战者发短信
      * @param request
      */
-    private void sendSms(LaunchChallengeRequest request) throws Exception {
+    private void sendSms(ChallengeRequest request) throws Exception {
         Long to = request.getTo();
-        User userTo = userRepo.findByQid(to);
+        UserEntity userTo = userRepo.findByQid(to);
         String phone = userTo.getPhone();
 
 
-        User userFrom = userRepo.findByQid(request.getFrom());
+        UserEntity userFrom = userRepo.findByQid(request.getFrom());
 
-        Hall hall = hallRepo.findByHallId(request.getHallId());
+        HallEntity hall = hallRepo.findByHallId(request.getHallId());
 
         StringBuilder sb = new StringBuilder(200);
         sb.append("亲，您有一位球友")
@@ -115,7 +114,36 @@ public class ChallengeService {
         log.info("[sendSms] >>> to:{} , content:{}, done",phone,sb.toString());
     }
 
-    public void getSchedule(Long qid){
-//        challengeRepo.findAll()
+    /**
+     * 接受挑战
+     * @param request
+     */
+    public Pair<Boolean,String> refuseChallenge(ChallengeRequest request){
+        ChallengeEntity entity = challengeRepo.findByChallengeIdAndTo(request.getChallengeId(), request.getQid());
+        if(entity == null){
+            return Pair.of(false,"挑战不存在");
+        }
+        if(entity.getStatus() == null || ChallengeStatus.INIT.getCode() != entity.getStatus()){
+            return Pair.of(false,"不是发起状态，不能拒绝");
+        }
+
+        challengeRepo.updateChallengeStatus(request.getChallengeId(), ChallengeStatus.TO_REFUSED);
+        return Pair.of(true,"ok");
+    }
+    /**
+     * 接受挑战
+     * @param request
+     */
+    public Pair<Boolean,String> acceptChallenge(ChallengeRequest request){
+        ChallengeEntity entity = challengeRepo.findByChallengeIdAndTo(request.getChallengeId(), request.getQid());
+        if(entity == null){
+            return Pair.of(false,"挑战不存在");
+        }
+        if(entity.getStatus() == null || ChallengeStatus.INIT.getCode() != entity.getStatus()){
+            return Pair.of(false,"不是发起状态，不能接受");
+        }
+
+        challengeRepo.updateChallengeStatus(request.getChallengeId(), ChallengeStatus.TO_ACCEPTED);
+        return Pair.of(true,"ok");
     }
 }

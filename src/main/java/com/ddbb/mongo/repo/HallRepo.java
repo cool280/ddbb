@@ -1,8 +1,7 @@
 package com.ddbb.mongo.repo;
 
 import com.ddbb.mongo.MongoBaseRepository;
-import com.ddbb.mongo.entity.Hall;
-import com.ddbb.mongo.entity.User;
+import com.ddbb.mongo.entity.HallEntity;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Repository;
 /**
@@ -10,7 +9,7 @@ import org.springframework.stereotype.Repository;
  db.hall.createIndex({"hallId":1},{"name":"uk_hallId",unique: true,"background":true})
  */
 @Repository
-public class HallRepo extends MongoBaseRepository<Hall> {
+public class HallRepo extends MongoBaseRepository<HallEntity> {
     @Override
     public String getCollectionName() {
         return "hall";
@@ -20,7 +19,7 @@ public class HallRepo extends MongoBaseRepository<Hall> {
      * @param hallId
      * @return
      */
-    public Hall findByHallId(Long hallId){
+    public HallEntity findByHallId(Long hallId){
         Criteria criteria = Criteria.where("hallId").is(hallId);
         return findOne(criteria);
     }

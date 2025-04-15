@@ -1,6 +1,6 @@
 package com.ddbb.test.challenge;
 
-import com.ddbb.config.ChallengeConfig;
+import com.ddbb.service.challenge.ChallengeConfig;
 import com.ddbb.mongo.repo.ChallengeRepo;
 import com.ddbb.service.challenge.ChallengeKit;
 import com.ddbb.service.challenge.ChallengeScheduleDO;

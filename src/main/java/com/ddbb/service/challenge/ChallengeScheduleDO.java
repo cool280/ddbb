@@ -13,5 +13,9 @@ public class ChallengeScheduleDO {
     private String dateDesc;
     //周几
     private Integer week;
+    /**
+     * 是否上班
+     */
+    private Boolean atWork;
     private List<HourDO> hourList;
 }

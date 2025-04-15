@@ -1,15 +1,13 @@
-package com.ddbb.mongo.entity;
+package com.ddbb.service.hall;
 
+import com.ddbb.mongo.MongoBaseRepository;
+import com.ddbb.mongo.entity.HallEntity;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
-
-import java.io.Serializable;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.stereotype.Repository;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
-public class Hall extends MongoEntity implements Serializable {
+public class HallVO {
     /**
      * 球房id
      */
@@ -48,7 +46,6 @@ public class Hall extends MongoEntity implements Serializable {
     private String address;
     private String tel;
     private String website;
-    private Double[] coordinate;
     /**
      * 面积
      */
@@ -78,5 +75,4 @@ public class Hall extends MongoEntity implements Serializable {
      * 自驾停车优惠
      */
     private String parkingDiscount;
-
 }

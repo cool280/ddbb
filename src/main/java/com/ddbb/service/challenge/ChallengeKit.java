@@ -1,13 +1,19 @@
 package com.ddbb.service.challenge;
 
-import com.ddbb.config.ChallengeConfig;
-import com.ddbb.mongo.entity.Challenge;
-import com.ddbb.mongo.entity.User;
+import com.ddbb.mongo.entity.ChallengeEntity;
+import com.ddbb.mongo.entity.CoachWorkplaceEntity;
+import com.ddbb.mongo.entity.UserEntity;
 import com.ddbb.mongo.repo.ChallengeRepo;
+import com.ddbb.mongo.repo.CoachWorkplaceReop;
+import com.ddbb.mongo.repo.HallRepo;
 import com.ddbb.mongo.repo.UserRepo;
+import com.ddbb.service.hall.HallVO;
+import com.ddbb.service.hall.WorkplaceVO;
 import com.ddbb.utils.DateUtilPlus;
 import com.ddbb.utils.DdbbUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -16,6 +22,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class ChallengeKit {
@@ -24,7 +32,11 @@ public class ChallengeKit {
     @Resource
     private UserRepo userRepo;
     @Resource
+    private HallRepo hallRepo;
+    @Resource
     private ChallengeRepo challengeRepo;
+    @Resource
+    private CoachWorkplaceReop coachWorkplaceReop;
 
     /**
      * <div>获取当前可预约的最小时间和最大时间</div>
@@ -35,7 +47,7 @@ public class ChallengeKit {
     public Pair<LocalDateTime,LocalDateTime> getAvailableOrderTime(){
         LocalDateTime now = LocalDateTime.now();
         //拿到今天的下一个整点
-        LocalDateTime min = now.with(LocalTime.of(DateUtilPlus.getNextHour(), 0,0));
+        LocalDateTime min = now.plusHours(1).withMinute(0).withSecond(0).withNano(0);
         //拿到后天的23点
         int afterDays = challengeConfig.getAfterDays();
         LocalDateTime max =now.plusDays(afterDays).with(LocalTime.of(23, 0,0));
@@ -52,12 +64,12 @@ public class ChallengeKit {
      * @return
      */
     public boolean isFree(Long qid,String dateStr,Integer startTime,Integer endTime){
-        List<Challenge> list = challengeRepo.getAllChallengeByDate(qid,dateStr);
+        List<ChallengeEntity> list = challengeRepo.getAllChallengeByDate(qid,dateStr);
         if(CollectionUtils.isEmpty(list)){
             return true;
         }
         int[] requestRange = {startTime,endTime};
-        for(Challenge c: list){
+        for(ChallengeEntity c: list){
             int[] existsRange = {c.getStartTime(),c.getEndTime()};
             if(DdbbUtil.isOverlap(requestRange,existsRange,false)){
                 return false;
@@ -66,16 +78,30 @@ public class ChallengeKit {
         return true;
     }
 
+    /**
+     * 获取一个人今天及以后的行程
+     * @param qid
+     * @return
+     */
     public Map<String,ChallengeScheduleDO> getSchedule(Long qid){
         Map<String,ChallengeScheduleDO> ret = new LinkedHashMap<>();
+        if(qid == null){
+            return ret;
+        }
         //今天及以后发起的挑战
         Map<String,List<Integer>> occupationLaunched = getOccupationTime(()->challengeRepo.getLaunchedTodayAndAfterChallenge(qid));
         //今天及以后收到的挑战
         Map<String,List<Integer>> occupationReceived = getOccupationTime(()->challengeRepo.getReceivedTodayAndAfterChallenge(qid));
 
-        User user = userRepo.findByQid(qid);
-        int workTimeStart = user.getWorkTimeStart();
-        int workTimeEnd = user.getWorkTimeEnd();
+        UserEntity user = userRepo.findByQid(qid);
+
+        //周几上班
+        String workWeekDayStr = StringUtils.isBlank(user.getWorkWeekDay())?"1,2,3,4,5,6,7":user.getWorkWeekDay();
+        List<Integer> workWeekDayList = Stream.of(workWeekDayStr.split(",")).map(String::trim)
+                    .map(Integer::parseInt).collect(Collectors.toList());
+        //每天上班具体时间
+        int workTimeStart = user.getWorkTimeStart() == null?challengeConfig.getDefaultWorkTimeStart():user.getWorkTimeStart();
+        int workTimeEnd = user.getWorkTimeEnd() == null?challengeConfig.getDefaultWorkTimeEnd():user.getWorkTimeEnd();
 
         //循环查找今天、明天、后天的行程表
         LocalDateTime loop = LocalDateTime.now();
@@ -104,27 +130,43 @@ public class ChallengeKit {
             challengeScheduleDO.setDateDesc(dateDesc);
             challengeScheduleDO.setWeek(week);
 
+            if(workWeekDayList.contains(week)){//全天休息
+                challengeScheduleDO.setAtWork(true);
+            }else{
+                challengeScheduleDO.setAtWork(false);
+                ret.put(dateStr,challengeScheduleDO);
+                continue;
+            }
+
             //循环每天的每个小时
             List<HourDO> hourList = new ArrayList<>();
-            for(int hour = workTimeStart;hour<workTimeEnd;hour++){
+            for(int hour = 0;hour<24;hour++){
                 HourDO hourDO= new HourDO();
                 hourDO.setStart(hour);
                 hourDO.setEnd(hour + 1);
 
                 int code = 0;
                 String hourDesc = "空闲";
-                //是否空闲
-                if(occupationLaunched.get(dateStr)!=null){
-                    if(occupationLaunched.get(dateStr).contains(hour)){
-                        code = 1;
-                        hourDesc = "向别人发起了挑战";
-                    }
-                }else if(occupationReceived.get(dateStr)!=null){
-                    if(occupationReceived.get(dateStr).contains(hour)){
-                        code = 2;
-                        hourDesc = "别人向TA发起了挑战";
+                if(hour < workTimeStart || hour >= workTimeEnd){
+                    code = -1;
+                    hourDesc = "休息";
+                }else{
+                    //是否空闲
+                    if(occupationLaunched.get(dateStr)!=null){
+                        //检查该时间段是否发起了挑战
+                        if(occupationLaunched.get(dateStr).contains(hour)){
+                            code = 1;
+                            hourDesc = "向别人发起了挑战";
+                        }
+                    }else if(occupationReceived.get(dateStr)!=null){
+                        //检查该时间段是否接受了挑战
+                        if(occupationReceived.get(dateStr).contains(hour)){
+                            code = 2;
+                            hourDesc = "别人向TA发起了挑战";
+                        }
                     }
                 }
+
                 hourDO.setCode(code);
                 hourDO.setHourDesc(hourDesc);
 
@@ -144,9 +186,9 @@ public class ChallengeKit {
      * @param func
      * @return {"2015-03-01":[14,15,16],"2015-03-02":[20,21],"2015-03-03":[]}
      */
-    public Map<String,List<Integer>> getOccupationTime(Supplier<List<Challenge>> func){
+    public Map<String,List<Integer>> getOccupationTime(Supplier<List<ChallengeEntity>> func){
         Map<String,List<Integer>> ret = new HashMap<>();
-        List<Challenge> futureChallenge = func.get();
+        List<ChallengeEntity> futureChallenge = func.get();
         if(CollectionUtils.isEmpty(futureChallenge)){
             return ret;
         }
@@ -166,6 +208,24 @@ public class ChallengeKit {
         return ret;
     }
 
+    /**
+     * 获取助教可出台球房
+     * @param qid
+     * @return
+     */
+    public List<WorkplaceVO> getSomeoneWorkplace(Long qid){
+        List<CoachWorkplaceEntity> list = coachWorkplaceReop.findByQid(qid);
+        if(CollectionUtils.isEmpty(list)){
+            return Collections.emptyList();
+        }
+
+        return list.stream().map(e->hallRepo.findByHallId(e.getHallId()))
+                .map(hall->{
+                    WorkplaceVO vo = new WorkplaceVO();
+                    BeanUtils.copyProperties(hall,vo);
+                    return vo;
+                }).collect(Collectors.toList());
+    }
 
 
 }
