@@ -21,4 +21,12 @@ public class ChallengeRequest implements Serializable {
      * 发起挑战的挑战id
      */
     private String challengeId;
+    /**
+     * 发起方胜几局
+     */
+    private Integer fromWinRound;
+    /**
+     * 接受方胜几局
+     */
+    private Integer toWinRound;
 }

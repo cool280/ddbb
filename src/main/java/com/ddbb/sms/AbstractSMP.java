@@ -2,6 +2,7 @@ package com.ddbb.sms;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ddbb.utils.OkHttpUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -9,6 +10,9 @@ import java.util.List;
 
 @Service
 public abstract class AbstractSMP {
+    @Value("${ddbb.allowSendSms:false}")
+    private boolean allowSendSms;
+
 
     protected static JSONObject simpleSuccess() {
         JSONObject json = new JSONObject();
@@ -55,6 +59,9 @@ public abstract class AbstractSMP {
      * TODO	发送短信
      */
     public final JSONObject sendMsg(String content, List<String> phoneList) throws Exception {
+        if(!allowSendSms){
+            return simpleFailure("不允许发送短信");
+        }
         if (phoneList == null || phoneList.size() <= 0) {
             throw new Exception("目标手机号个数为0！");
         }

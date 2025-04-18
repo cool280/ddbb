@@ -24,7 +24,7 @@ public class NearbyController extends BaseController {
 
     @ResponseBody
     @PostMapping("/coach")
-    public JSONObject getNearbyAssistantCoach(@RequestBody NearbyAssistantCoachRequest nearbyRequest){
+    public BaseResult getNearbyAssistantCoach(@RequestBody NearbyAssistantCoachRequest nearbyRequest){
         log.info("getNearbyAssistantCoach start: {}", ObjectConverter.o2s(nearbyRequest));
         List<NearbyAssistantCoachResponse> ret = nearbyService.getNearbyAssistantCoach(nearbyRequest);
         return OK(ret,"");
@@ -32,7 +32,7 @@ public class NearbyController extends BaseController {
 
     @ResponseBody
     @PostMapping("/hall")
-    public JSONObject getNearbyHall(@RequestBody NearbyHallRequest nearbyRequest){
+    public BaseResult getNearbyHall(@RequestBody NearbyHallRequest nearbyRequest){
         log.info("getNearbyHall start: {}", ObjectConverter.o2s(nearbyRequest));
         List<NearbyHallResponse> ret = nearbyService.getNearbyHall(nearbyRequest);
         return OK(ret,"");

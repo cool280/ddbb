@@ -12,6 +12,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Optional;
 
 /**
  */
@@ -105,6 +106,15 @@ public class ChallengeRepo extends MongoBaseRepository<ChallengeEntity> {
         return all;
     }
     /**
+     * 根据challengeId查询，会返回一对儿
+     * @param challengeId
+     * @return
+     */
+    public ChallengeEntity findOneByChallengeId(String challengeId){
+        List<ChallengeEntity> all = findByChallengeId(challengeId);
+        return CollectionUtils.isEmpty(all)?null:all.get(0);
+    }
+    /**
      * 根据challengeId和from查询
      * @param challengeId
      * @return
@@ -138,6 +148,81 @@ public class ChallengeRepo extends MongoBaseRepository<ChallengeEntity> {
         Query q = new Query(criteria);
 
         Update u = new Update().set("status", status.getCode());
+
+        mongoTemplate.updateMulti(q,u,getCollectionName());
+    }
+
+    /**
+     * 根据challengeId更新两条记录的状态，并且终止挑战
+     * @param challengeId
+     */
+    public void updateChallengeStatusAndFinish(String challengeId,ChallengeStatus status){
+        Criteria criteria = Criteria.where("challengeId").is(challengeId);
+        Query q = new Query(criteria);
+
+        Update u = new Update().set("status", status.getCode()).set("alive",false);
+
+        mongoTemplate.updateMulti(q,u,getCollectionName());
+    }
+
+    /**
+     * 签到
+     * @param challengeId
+     * @param status
+     * @param isFromSignIn 是否发起方签到
+     */
+    public void signIn(String challengeId,ChallengeStatus status,boolean isFromSignIn){
+        Criteria criteria = Criteria.where("challengeId").is(challengeId);
+        Query q = new Query(criteria);
+
+        Update u = new Update().set("status", status.getCode());
+        if(isFromSignIn){
+            u.set("fromSignIn",true);
+        }else {
+            u.set("toSignIn",true);
+        }
+
+        mongoTemplate.updateMulti(q,u,getCollectionName());
+    }
+
+
+    /**
+     * 登记比分
+     * @param challengeId
+     * @param scoreSnapshot 比分，字符串，格式：from胜几局_to胜几局
+     */
+    public void saveScore(String challengeId,String scoreSnapshot){
+        Criteria criteria = Criteria.where("challengeId").is(challengeId);
+        Query q = new Query(criteria);
+
+        Update u = new Update().set("status", ChallengeStatus.SCORE_SAVED.getCode()).set("scoreSnapshot",scoreSnapshot)
+                .set("scoreSaved",true);
+
+        mongoTemplate.updateMulti(q,u,getCollectionName());
+    }
+
+    /**
+     * 评价助教
+     * @param challengeId
+     */
+    public void commentCoach(String challengeId){
+        Criteria criteria = Criteria.where("challengeId").is(challengeId);
+        Query q = new Query(criteria);
+
+        Update u = new Update().set("status", ChallengeStatus.COACH_COMMENTED.getCode()).set("coachCommented",true);
+
+        mongoTemplate.updateMulti(q,u,getCollectionName());
+    }
+    /**
+     * 评价球房
+     * @param challengeId
+     */
+    public void commentHall(String challengeId){
+        Criteria criteria = Criteria.where("challengeId").is(challengeId);
+        Query q = new Query(criteria);
+
+        Update u = new Update().set("status", ChallengeStatus.HALL_COMMENTED.getCode()).set("hallCommented",true);
+
         mongoTemplate.updateMulti(q,u,getCollectionName());
     }
 }

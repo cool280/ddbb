@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class LoginController extends BaseController{
     @PostMapping("/sendSmsCode")
     @ResponseBody
-    public JSONObject sendSmsCode(String mobile){
+    public BaseResult sendSmsCode(String mobile){
         return OK;
     }
     @PostMapping("/doLogin")
     @ResponseBody
-    public JSONObject login(String mobile,String vCode){
+    public BaseResult login(String mobile,String vCode){
         return OK;
     }
 

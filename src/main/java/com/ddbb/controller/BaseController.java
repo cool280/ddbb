@@ -4,47 +4,36 @@ package com.ddbb.controller;
 import com.alibaba.fastjson.JSONObject;
 
 public class BaseController {
-    public static JSONObject OK = OK();
-    public static JSONObject ERROR = ERROR();
+    public final static BaseResult OK = OK();
+    public final static BaseResult ERROR = ERROR();
 
 
-    public static JSONObject OK(){
+    public final static BaseResult OK(){
         return OK(null);
     }
-    public static JSONObject OK(Object data){
+    public final static BaseResult OK(Object data){
         return OK(data,"ok");
     }
-    public static JSONObject OK(Object data, String msg){
-        JSONObject json = new JSONObject();
-        json.put("resultCode",0);
-        json.put("msg",msg);
-        json.put("data",data);
-        return json;
+    public final static BaseResult OK(Object data, String msg){
+        return new BaseResult(0,msg,data);
     }
 
-    public static JSONObject RESULT(int code){
+    public final static BaseResult RESULT(int code){
         return RESULT(code,"");
     }
-    public static JSONObject RESULT(int code, String msg){
+    public final static BaseResult RESULT(int code, String msg){
         return RESULT(code,null,msg);
     }
-    public static JSONObject RESULT(int code, Object data, String msg){
-        JSONObject json = new JSONObject();
-        json.put("resultCode",code);
-        json.put("msg",msg);
-        json.put("data",data);
-        return json;
+    public final static BaseResult RESULT(int code, Object data, String msg){
+        return new BaseResult(code,msg,data);
     }
-    public static JSONObject ERROR(){
+    public final static BaseResult ERROR(){
         return ERROR("");
     }
-    public static JSONObject ERROR(Throwable e){
+    public final static BaseResult ERROR(Throwable e){
         return ERROR(e.getMessage());
     }
-    public static JSONObject ERROR(String err){
-        JSONObject json = new JSONObject();
-        json.put("resultCode",-1);
-        json.put("msg",err);
-        return json;
+    public final static BaseResult ERROR(String err){
+        return new BaseResult(-1,err);
     }
 }

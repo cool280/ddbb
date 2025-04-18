@@ -32,5 +32,33 @@ public class ChallengeEntity extends MongoEntity implements Serializable {
      * 动作：1 - 发起，2 - 接受
      */
     private Integer challengeRole;
+    /**
+     * 挑战书是否存活。定时任务，超过24h自动设置为false
+     */
+    private Boolean alive;
+    /**
+     * 挑战方是否签到
+     */
+    private Boolean fromSignIn;
+    /**
+     * 接受方是否签到
+     */
+    private Boolean toSignIn;
+    /**
+     * 比分是否登记
+     */
+    private Boolean scoreSaved;
+    /**
+     * 比分，字符串，格式：from胜几局_to胜几局 或 from分数_to分数
+     */
+    private String scoreSnapshot;
+    /**
+     * 助教是否已评价
+     */
+    private Boolean coachCommented;
+    /**
+     * 球房是否已评价
+     */
+    private Boolean hallCommented;
 
 }

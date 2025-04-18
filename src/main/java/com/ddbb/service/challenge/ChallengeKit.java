@@ -227,5 +227,14 @@ public class ChallengeKit {
                 }).collect(Collectors.toList());
     }
 
-
+    /**
+     * 获取一个挑战书的起止时间
+     * @param entity
+     * @return left - 开始时间，right - 结束时间
+     */
+    public Pair<LocalDateTime,LocalDateTime> getChallengeStartAndEnd(ChallengeEntity entity){
+        LocalDateTime start = DateUtilPlus.string2LocalDateTime(entity.getChallengeDateStr()+" "+ StringUtils.leftPad(entity.getStartTime().toString(),2,"0")+":00:00");
+        LocalDateTime end = DateUtilPlus.string2LocalDateTime(entity.getChallengeDateStr()+" "+ StringUtils.leftPad(entity.getEndTime().toString(),2,"0")+":00:00");
+        return Pair.of(start,end);
+    }
 }

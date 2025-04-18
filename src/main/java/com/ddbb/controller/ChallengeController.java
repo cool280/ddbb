@@ -46,7 +46,7 @@ public class ChallengeController extends BaseController {
      */
     @ResponseBody
     @PostMapping("/prepareChallenge")
-    public JSONObject prepareChallenge(@RequestBody ChallengeRequest request){
+    public BaseResult prepareChallenge(@RequestBody ChallengeRequest request){
         log.info("[prepareChallenge] >>> start: {}", ObjectConverter.o2s(request));
         JSONObject data = new JSONObject();
         try{
@@ -82,7 +82,7 @@ public class ChallengeController extends BaseController {
      */
     @ResponseBody
     @PostMapping("/launchChallenge")
-    public JSONObject launchChallenge(@RequestBody ChallengeRequest request){
+    public BaseResult launchChallenge(@RequestBody ChallengeRequest request){
         log.info("[launchChallenge] >>> start: {}", ObjectConverter.o2s(request));
         try{
             //0. 身份校验
@@ -158,7 +158,7 @@ public class ChallengeController extends BaseController {
      */
     @ResponseBody
     @PostMapping("/getSomeoneSchedule")
-    public JSONObject getSomeoneSchedule(@RequestBody ChallengeRequest request){
+    public BaseResult getSomeoneSchedule(@RequestBody ChallengeRequest request){
         log.info("[getSomeoneSchedule] >>> start: {}", ObjectConverter.o2s(request));
         try{
             Long qid = request.getQid();
@@ -176,7 +176,7 @@ public class ChallengeController extends BaseController {
      */
     @ResponseBody
     @PostMapping("/getSomeoneWorkplace")
-    public JSONObject getSomeoneWorkplace(@RequestBody ChallengeRequest request){
+    public BaseResult getSomeoneWorkplace(@RequestBody ChallengeRequest request){
         log.info("[getSomeoneWorkplace] >>> start: {}", ObjectConverter.o2s(request));
         try{
             Long qid = request.getQid();
@@ -190,13 +190,13 @@ public class ChallengeController extends BaseController {
 
 
     /**
-     * 接受挑战
+     * to接受挑战
      * @param request
      * @return
      */
     @ResponseBody
     @PostMapping("/acceptChallenge")
-    public JSONObject acceptChallenge(@RequestBody ChallengeRequest request){
+    public BaseResult acceptChallenge(@RequestBody ChallengeRequest request){
         log.info("[acceptChallenge] >>> start: {}", ObjectConverter.o2s(request));
         try{
             Long qid = request.getQid();
@@ -215,13 +215,13 @@ public class ChallengeController extends BaseController {
         }
     }
     /**
-     * 接受挑战
+     * to拒绝挑战
      * @param request
      * @return
      */
     @ResponseBody
     @PostMapping("/refuseChallenge")
-    public JSONObject refuseChallenge(@RequestBody ChallengeRequest request){
+    public BaseResult refuseChallenge(@RequestBody ChallengeRequest request){
         log.info("[refuseChallenge] >>> start: {}", ObjectConverter.o2s(request));
         try{
             Long qid = request.getQid();
@@ -231,11 +231,145 @@ public class ChallengeController extends BaseController {
             }
             Pair<Boolean,String> p = challengeService.refuseChallenge(request);
             if(p.getLeft()){
-                return OK("您已拒绝改挑战");
+                return OK("您已拒绝了该挑战");
             }
             return ERROR(p.getRight());
         }catch (Exception e){
             log.error("[refuseChallenge] with error:{}",e.getMessage(),e);
+            return ERROR;
+        }
+    }
+
+    /**
+     * 取消挑战
+     * @param request
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/cancelChallenge")
+    public BaseResult cancelChallenge(@RequestBody ChallengeRequest request){
+        log.info("[cancelChallenge] >>> start: {}", ObjectConverter.o2s(request));
+        try{
+            Long qid = request.getQid();
+            String challengeId = request.getChallengeId();
+            if(qid == null || StringUtils.isBlank(challengeId)){
+                return ERROR("param error");
+            }
+            Pair<Boolean,String> p = challengeService.cancelChallenge(request);
+            if(p.getLeft()){
+                return OK("您已取消了该挑战");
+            }
+            return ERROR(p.getRight());
+        }catch (Exception e){
+            log.error("[cancelChallenge] with error:{}",e.getMessage(),e);
+            return ERROR;
+        }
+    }
+
+    /**
+     * 签到
+     * @param request
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/signIn")
+    public BaseResult signIn(@RequestBody ChallengeRequest request){
+        log.info("[signIn] >>> start: {}", ObjectConverter.o2s(request));
+        try{
+            Long qid = request.getQid();
+            String challengeId = request.getChallengeId();
+            if(qid == null || StringUtils.isBlank(challengeId)){
+                return ERROR("param error");
+            }
+            Pair<Boolean,String> p = challengeService.signIn(request);
+            if(p.getLeft()){
+                return OK("您已签到，可电话联系对方");
+            }
+            return ERROR(p.getRight());
+        }catch (Exception e){
+            log.error("[signIn] with error:{}",e.getMessage(),e);
+            return ERROR;
+        }
+    }
+
+
+    /**
+     * 签到
+     * @param request
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/saveScore")
+    public BaseResult saveScore(@RequestBody ChallengeRequest request){
+        log.info("[saveScore] >>> start: {}", ObjectConverter.o2s(request));
+        try{
+            Long qid = request.getQid();
+            String challengeId = request.getChallengeId();
+            if(qid == null || StringUtils.isBlank(challengeId) ||
+                    request.getFromWinRound() == null || request.getToWinRound() == null){
+                return ERROR("param error");
+            }
+            Pair<Boolean,String> p = challengeService.saveScore(request);
+            if(p.getLeft()){
+                return OK("登记比分完成");
+            }
+            return ERROR(p.getRight());
+        }catch (Exception e){
+            log.error("[saveScore] with error:{}",e.getMessage(),e);
+            return ERROR;
+        }
+    }
+
+    /**
+     * 评价助教
+     * @param request
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/commentCoach")
+    public BaseResult commentCoach(@RequestBody ChallengeRequest request){
+        //TODO 需高总的评价接口，这里只做状态的改变
+        log.info("[commentCoach] >>> start: {}", ObjectConverter.o2s(request));
+        try{
+            Long qid = request.getQid();
+            String challengeId = request.getChallengeId();
+            if(qid == null || StringUtils.isBlank(challengeId)){
+                return ERROR("param error");
+            }
+            Pair<Boolean,String> p = challengeService.commentCoach(request);
+            if(p.getLeft()){
+                return OK("助教评价完成");
+            }
+            return ERROR(p.getRight());
+        }catch (Exception e){
+            log.error("[commentCoach] with error:{}",e.getMessage(),e);
+            return ERROR;
+        }
+    }
+
+    /**
+     * 评价球房
+     * @param request
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/commentHall")
+    public BaseResult commentHall(@RequestBody ChallengeRequest request){
+        //TODO 需高总的评价接口，这里只做状态的改变
+        log.info("[commentHall] >>> start: {}", ObjectConverter.o2s(request));
+        try{
+            Long qid = request.getQid();
+            String challengeId = request.getChallengeId();
+            if(qid == null || StringUtils.isBlank(challengeId)){
+                return ERROR("param error");
+            }
+            Pair<Boolean,String> p = challengeService.commentHall(request);
+            if(p.getLeft()){
+                return OK("球房评价完成");
+            }
+            return ERROR(p.getRight());
+        }catch (Exception e){
+            log.error("[commentHall] with error:{}",e.getMessage(),e);
             return ERROR;
         }
     }
