@@ -225,4 +225,18 @@ public class ChallengeRepo extends MongoBaseRepository<ChallengeEntity> {
 
         mongoTemplate.updateMulti(q,u,getCollectionName());
     }
+
+
+    /**
+     * 关闭挑战
+     * @param challengeId
+     */
+    public void closeChallenge(String challengeId){
+        Criteria criteria = Criteria.where("challengeId").is(challengeId);
+        Query q = new Query(criteria);
+
+        Update u = new Update().set("alive",false);
+
+        mongoTemplate.updateMulti(q,u,getCollectionName());
+    }
 }

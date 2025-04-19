@@ -13,6 +13,7 @@ public class UserEntity extends MongoEntity implements Serializable {
     private String phone;
     private String nickname;
     private Integer age;
+    private Integer gender;
     private String avatar;
     private String cityCode;
     private String cityName;

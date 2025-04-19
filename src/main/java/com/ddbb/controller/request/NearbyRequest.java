@@ -5,7 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class NearbyRequest implements Serializable {
+public class NearbyRequest extends BaseRequest implements Serializable {
     private Long qid;
     private Double longitude;
     private Double latitude;

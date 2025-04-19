@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @Data
-public class ChallengeRequest implements Serializable {
+public class ChallengeRequest extends BaseRequest implements Serializable {
     private Long from;//挑战发起人 - 球友id
     private Long to;//挑战接收
     private Long qid;//请求人id

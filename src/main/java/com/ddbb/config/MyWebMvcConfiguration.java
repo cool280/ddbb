@@ -26,10 +26,11 @@ public class MyWebMvcConfiguration implements WebMvcConfigurer{
     //获取配置文件中图片的路径
     @Value("${cbs.imagesPath}")
     private String mImagesPath;
+    @Value("${cbs.imagesUrlContext}")
+    private String imagesUrlContext;
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // TODO Auto-generated method stub
         if(mImagesPath.equals("") || mImagesPath.equals("${cbs.imagesPath}")){
 
             String imagesPath = MyWebMvcConfiguration.class.getClassLoader().getResource("").getPath();
@@ -46,6 +47,7 @@ public class MyWebMvcConfiguration implements WebMvcConfigurer{
 
         log.info("------imagesPath="+mImagesPath);
 
-        registry.addResourceHandler("/images/**").addResourceLocations(mImagesPath);
+        //registry.addResourceHandler("/images/**").addResourceLocations(mImagesPath);
+        registry.addResourceHandler("/"+imagesUrlContext+"/**").addResourceLocations(mImagesPath);
     }
 }

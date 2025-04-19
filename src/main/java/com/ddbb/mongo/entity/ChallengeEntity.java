@@ -60,5 +60,6 @@ public class ChallengeEntity extends MongoEntity implements Serializable {
      * 球房是否已评价
      */
     private Boolean hallCommented;
-
+    private Long createTimeTs;
+    private Long updateTimeTs;
 }

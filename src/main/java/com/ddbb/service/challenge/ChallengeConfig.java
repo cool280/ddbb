@@ -4,7 +4,6 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -21,6 +20,14 @@ public class ChallengeConfig {
      * 最多可预约到几天后对战
      */
     private Integer afterDays;
+    /**
+     * 挑战结束多少秒后，关闭挑战
+     */
+    private Integer closeWhenSecondsAfterEndTime;
+    /**
+     * 默认星期几上班: 1,2,3,4,5,6,7
+     */
+    private String defaultWorkDay;
     /**
      * 助教是否可以发起挑战
      */

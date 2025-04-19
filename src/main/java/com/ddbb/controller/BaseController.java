@@ -1,9 +1,15 @@
 package com.ddbb.controller;
 
 
-import com.alibaba.fastjson.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
+
+import javax.servlet.http.HttpServletRequest;
 
 public class BaseController {
+    @Value("${cbs.imagesUrlContext}")
+    private String imagesUrlContext;
+
+
     public final static BaseResult OK = OK();
     public final static BaseResult ERROR = ERROR();
 
@@ -35,5 +41,13 @@ public class BaseController {
     }
     public final static BaseResult ERROR(String err){
         return new BaseResult(-1,err);
+    }
+
+    protected String getImageAbsoluteUrl(HttpServletRequest httpServletRequest,String imageRelativePath){
+        String url = httpServletRequest.getRequestURL().toString();//http://127.0.0.1:8080/nearby/coach
+        int pos = url.indexOf("//");
+        int pos2 = url.indexOf("/",pos+2);
+        String url1 = url.substring(0,pos2);
+        return url1 + "/" +imagesUrlContext+"/"+ imageRelativePath;
     }
 }

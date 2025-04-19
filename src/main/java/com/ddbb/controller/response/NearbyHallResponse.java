@@ -1,10 +1,11 @@
-package com.ddbb.controller.request;
+package com.ddbb.controller.response;
 
+import com.ddbb.controller.response.BaseResponse;
 import lombok.Data;
 
 import java.io.Serializable;
 @Data
-public class NearbyHallResponse implements Serializable {
+public class NearbyHallResponse extends BaseResponse implements Serializable {
     /**
      * 球房id
      */

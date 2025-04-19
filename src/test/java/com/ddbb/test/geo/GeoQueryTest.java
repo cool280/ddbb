@@ -1,9 +1,9 @@
 package com.ddbb.test.geo;
 
 import com.ddbb.controller.request.NearbyAssistantCoachRequest;
-import com.ddbb.controller.request.NearbyAssistantCoachResponse;
+import com.ddbb.controller.response.NearbyAssistantCoachResponse;
 import com.ddbb.controller.request.NearbyHallRequest;
-import com.ddbb.controller.request.NearbyHallResponse;
+import com.ddbb.controller.response.NearbyHallResponse;
 import com.ddbb.service.nearby.NearbyService;
 import com.ddbb.utils.ObjectConverter;
 import lombok.extern.slf4j.Slf4j;

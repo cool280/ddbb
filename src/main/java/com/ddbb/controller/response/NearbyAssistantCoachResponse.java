@@ -1,11 +1,12 @@
-package com.ddbb.controller.request;
+package com.ddbb.controller.response;
 
+import com.ddbb.controller.response.BaseResponse;
 import lombok.Data;
 
 import java.io.Serializable;
 
 @Data
-public class NearbyAssistantCoachResponse implements Serializable {
+public class NearbyAssistantCoachResponse extends BaseResponse implements Serializable {
     private Long qid;
     private String nickname;
     private Integer age;

@@ -11,7 +11,6 @@ import com.ddbb.mongo.repo.HallRepo;
 import com.ddbb.mongo.repo.UserRepo;
 import com.ddbb.sms.Sioo;
 import com.ddbb.utils.SnowflakeIdUtil;
-import jdk.nashorn.internal.ir.BlockLexicalContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -21,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @Slf4j
@@ -36,6 +34,8 @@ public class ChallengeService {
     private Sioo sioo;
     @Autowired
     private ChallengeKit challengeKit;
+    @Autowired
+    private ChallengeConfig challengeConfig;
     /**
      * 发起挑战
      * @param request
@@ -72,8 +72,8 @@ public class ChallengeService {
         from.setEndTime(request.getEndTime());
         from.setHallId(request.getHallId());
         from.setStartTime(request.getStartTime());
-        from.setCreateTime(now);
-        from.setUpdateTime(now);
+        from.setCreateTimeTs(now);
+        from.setUpdateTimeTs(now);
         from.setStatus(ChallengeStatus.INIT.getCode());
         from.setChallengeRole(ChallengeRole.LAUNCH.getCode());
         from.setAlive(true);
@@ -367,11 +367,13 @@ public class ChallengeService {
 
 
         Pair<LocalDateTime,LocalDateTime> se = challengeKit.getChallengeStartAndEnd(entity);
+
+        int ss = challengeConfig.getCloseWhenSecondsAfterEndTime();
         //比分登记、评价助教、评价球房可在比赛结束后24h内进行
         if(newStatus.equals(ChallengeStatus.SCORE_SAVED) || newStatus.equals(ChallengeStatus.COACH_COMMENTED)
                 || newStatus.equals(ChallengeStatus.HALL_COMMENTED)){
-            if(LocalDateTime.now().isAfter(se.getRight().plusHours(24))){
-                return Pair.of(false,"挑战已结束24小时，不可操作");
+            if(LocalDateTime.now().isAfter(se.getRight().plusSeconds(ss))){
+                return Pair.of(false,"挑战已结束"+(ss/3600)+"小时，不可操作");
             }
         }else{
             if(LocalDateTime.now().isAfter(se.getRight())){

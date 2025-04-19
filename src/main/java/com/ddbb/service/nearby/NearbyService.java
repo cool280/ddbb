@@ -1,6 +1,8 @@
 package com.ddbb.service.nearby;
 
 import com.ddbb.controller.request.*;
+import com.ddbb.controller.response.NearbyAssistantCoachResponse;
+import com.ddbb.controller.response.NearbyHallResponse;
 import com.ddbb.mongo.repo.UserRepo;
 import com.ddbb.mongo.GeoQueryContext;
 import com.ddbb.mongo.repo.HallRepo;

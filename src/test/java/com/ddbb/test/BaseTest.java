@@ -79,19 +79,5 @@ import java.util.List;
 //}
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @RunWith(SpringRunner.class)
-@Slf4j
-public class SmsTest {
-
-    @Autowired
-    private Sioo sioo;
-
-    @Test
-    public void testSendMsg() throws Exception {
-
-        List<String> phone = new ArrayList<>();
-        phone.add("13472644829");
-        sioo.sendMsg("a test message 123",phone);
-        System.out.println("============= done ==============");
-    }
-
+public class BaseTest {
 }

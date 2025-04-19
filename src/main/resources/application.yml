@@ -8,15 +8,20 @@ spring:
       host: 127.0.0.1
       port: 27017
 cbs:
-  imagesPath: file:/D:/images/
+  imagesPath: file:/D:/ddbb_images/
+  imagesUrlContext: images
 
 ddbb:
-  allowSendSms: false
+  allowSendSms: true
   challenge:
     #最多可预约到几天后对战
     afterDays: 2
+    #挑战结束多少秒后，关闭挑战
+    closeWhenSecondsAfterEndTime: 86400
     #助教是否可以发起挑战
     assistantCoachAllowLaunch: false
+    #默认星期几上班
+    defaultWorkDay: 1,2,3,4,5,6,7
     #默认上班时间
     defaultWorkTimeStart: 14
     #默认下班时间
