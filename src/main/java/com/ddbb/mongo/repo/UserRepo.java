@@ -1,12 +1,14 @@
 package com.ddbb.mongo.repo;
 
+import com.ddbb.enums.UserType;
 import com.ddbb.mongo.MongoBaseRepository;
 import com.ddbb.mongo.entity.UserEntity;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
- db.user.createIndex({"coordinate":"2dsphere"},{"name":"idx_coordinate_2dsphere","background":true})
  db.user.createIndex({"qid":1},{"name":"uk_qid",unique: true,"background":true})
  db.user.createIndex({"aid":1},{"name":"uk_aid",unique: true,"background":true})
  db.user.createIndex({"phone":1},{"name":"uk_phone",unique: true,"background":true})
@@ -35,5 +37,14 @@ public class UserRepo extends MongoBaseRepository<UserEntity> {
     public UserEntity findByPhone(String phone){
         Criteria criteria = Criteria.where("phone").is(phone);
         return findOne(criteria);
+    }
+
+    /**
+     * 明星助教
+     * @return
+     */
+    public List<UserEntity> getStarCoach(){
+        Criteria criteria = Criteria.where("userType").is(UserType.ASSISTANT_COACH.getCode()).and("starLevel").gt(0);
+        return findAll(criteria);
     }
 }

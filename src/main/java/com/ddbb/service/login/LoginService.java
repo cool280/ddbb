@@ -77,6 +77,7 @@ public class LoginService {
         }
 
         return LoginResponse.builder().resultCode(0).msg("ok").newUser(isNewUser).qid(user.getQid())
+                .userType(user.getUserType())
                 .build();
     }
 

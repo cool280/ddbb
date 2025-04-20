@@ -1,11 +1,12 @@
 package com.ddbb.controller.response;
 
-import com.ddbb.controller.response.BaseResponse;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
+
 @Data
-public class NearbyHallResponse extends BaseResponse implements Serializable {
+public class NearbyHallResponse extends BaseResponse implements Serializable, IWithPhotoVO {
     /**
      * 球房id
      */
@@ -22,6 +23,7 @@ public class NearbyHallResponse extends BaseResponse implements Serializable {
      * 球房头像
      */
     private String avatar;
+    private List<String> photo;
     private String cityCode;
     private String cityName;
     /**

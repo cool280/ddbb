@@ -11,4 +11,5 @@ public class LoginResponse extends BaseResponse implements Serializable {
     private Long qid;
     private int resultCode;
     private String msg;
+    private int userType;
 }

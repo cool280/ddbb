@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -26,6 +27,7 @@ public class HallEntity extends MongoEntity implements Serializable {
      * 球房头像
      */
     private String avatar;
+    private List<String> photo;
     private String cityCode;
     private String cityName;
     /**

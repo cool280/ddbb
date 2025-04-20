@@ -3,6 +3,7 @@ package com.ddbb.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.ddbb.annotate.DdbbController;
 import com.ddbb.controller.request.ChallengeRequest;
+import com.ddbb.controller.request.CoachRegisterRequest;
 import com.ddbb.controller.request.LoginRequest;
 import com.ddbb.controller.response.LoginResponse;
 import com.ddbb.mongo.entity.LoginVerifyCodeEntity;
@@ -82,6 +83,12 @@ public class LoginController extends BaseController{
             e.printStackTrace();
             return ERROR("登录失败，请稍后重试!");
         }
+    }
+
+    @PostMapping("/coachRegister")
+    @ResponseBody
+    public BaseResult coachRegister(@RequestBody CoachRegisterRequest request){
+        return null;
     }
 
 }

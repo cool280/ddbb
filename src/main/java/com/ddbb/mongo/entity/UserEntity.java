@@ -5,6 +5,8 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.util.List;
+
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
@@ -15,6 +17,7 @@ public class UserEntity extends MongoEntity implements Serializable {
     private Integer age;
     private Integer gender;
     private String avatar;
+    private List<String> photo;
     private String cityCode;
     private String cityName;
     private String hometown;

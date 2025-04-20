@@ -1,16 +1,17 @@
 package com.ddbb.controller.response;
 
-import com.ddbb.controller.response.BaseResponse;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
-public class NearbyAssistantCoachResponse extends BaseResponse implements Serializable {
+public class NearbyAssistantCoachResponse extends BaseResponse implements Serializable, IWithPhotoVO {
     private Long qid;
     private String nickname;
     private Integer age;
     private String avatar;
+    private List<String> photo;
     private String cityCode;
     private String cityName;
     private String hometown;

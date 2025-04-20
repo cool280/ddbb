@@ -2,6 +2,7 @@ package com.ddbb.controller;
 
 import com.ddbb.annotate.DdbbController;
 import com.ddbb.controller.request.NearbyAssistantCoachRequest;
+import com.ddbb.controller.response.IWithPhotoVO;
 import com.ddbb.controller.response.NearbyAssistantCoachResponse;
 import com.ddbb.controller.request.NearbyHallRequest;
 import com.ddbb.controller.response.NearbyHallResponse;
@@ -9,10 +10,12 @@ import com.ddbb.service.nearby.NearbyService;
 import com.ddbb.utils.ObjectConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -51,10 +54,46 @@ public class NearbyController extends BaseController {
     }
 
     @ResponseBody
+    @PostMapping("/starCoach")
+    public BaseResult getStarAssistantCoach(@RequestBody NearbyAssistantCoachRequest nearbyRequest, HttpServletRequest httpServletRequest){
+        log.info("getStarAssistantCoach start: {}", ObjectConverter.o2s(nearbyRequest));
+        List<NearbyAssistantCoachResponse> ret = nearbyService.getStarAssistantCoach(nearbyRequest);
+        if(ret !=null){
+            ret.forEach(e->{
+                e.setAvatar(getImageAbsoluteUrl(httpServletRequest,e.getAvatar()));
+                handlePhoto(e,httpServletRequest);
+            });
+        }
+
+        return OK(ret,"");
+    }
+    private void handlePhoto(IWithPhotoVO ele, HttpServletRequest httpServletRequest){
+        List<String> photo = ele.getPhoto();
+        if(CollectionUtils.isEmpty(photo)){
+            return;
+        }
+
+        List<String> photoUrls = new ArrayList<>();
+        photo.forEach(s->{
+            photoUrls.add(getImageAbsoluteUrl(httpServletRequest,s));
+        });
+
+        ele.setPhoto(photoUrls);
+    }
+
+
+    @ResponseBody
     @PostMapping("/hall")
-    public BaseResult getNearbyHall(@RequestBody NearbyHallRequest nearbyRequest){
+    public BaseResult getNearbyHall(@RequestBody NearbyHallRequest nearbyRequest, HttpServletRequest httpServletRequest){
         log.info("getNearbyHall start: {}", ObjectConverter.o2s(nearbyRequest));
         List<NearbyHallResponse> ret = nearbyService.getNearbyHall(nearbyRequest);
+
+        if(ret !=null){
+            ret.forEach(e->{
+                e.setAvatar(getImageAbsoluteUrl(httpServletRequest,e.getAvatar()));
+                handlePhoto(e,httpServletRequest);
+            });
+        }
         return OK(ret,"");
     }
 }

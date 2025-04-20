@@ -19,8 +19,9 @@ public class SnowflakeIdUtil {
     private static Logger logger = LoggerFactory.getLogger(SnowflakeIdUtil.class.getName());
     /**
      * 业务系统上线的时间 2024-10-01 0:0:0，41位最多可以表示约69.7年
+     * 2024-10-01 0:0:0 - 1727712000000L
      */
-    private static final long twepoch = 1727712000000L;
+    private static final long twepoch = 1745140495000L;
     /**
      * 毫秒内序列
      */

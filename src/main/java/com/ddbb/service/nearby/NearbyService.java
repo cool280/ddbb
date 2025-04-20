@@ -53,6 +53,23 @@ public class NearbyService {
         }
         return ret;
     }
+
+    /**
+     * 获取明星助教
+     * @param nearbyRequest
+     * @return
+     */
+    public List<NearbyAssistantCoachResponse> getStarAssistantCoach(NearbyAssistantCoachRequest nearbyRequest) {
+        List<UserEntity> list = repo.getStarCoach();
+
+        List<NearbyAssistantCoachResponse> ret = new ArrayList<>();
+        list.forEach(e -> {
+            NearbyAssistantCoachResponse r = new NearbyAssistantCoachResponse();
+            BeanUtils.copyProperties(e, r);
+            ret.add(r);
+        });
+        return ret;
+    }
     /**
      * 获取附近的球房
      * @param nearbyRequest
