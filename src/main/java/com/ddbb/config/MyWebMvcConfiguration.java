@@ -1,12 +1,11 @@
 package com.ddbb.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * 1. application.properties文件中的路径配置如下：
@@ -49,5 +48,7 @@ public class MyWebMvcConfiguration implements WebMvcConfigurer{
 
         //registry.addResourceHandler("/images/**").addResourceLocations(mImagesPath);
         registry.addResourceHandler("/"+imagesUrlContext+"/**").addResourceLocations(mImagesPath);
+        // 确保添加了正确的路径映射
+        registry.addResourceHandler("/**").addResourceLocations("classpath:/static/","classpath:/templates/");
     }
 }

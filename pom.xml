@@ -28,6 +28,10 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.16.12</version>
@@ -148,6 +152,22 @@
                 <resources>
                     <resource>
                         <directory>src/main/resources-prod</directory>
+                    </resource>
+                    <resource>
+                        <directory>src/main/resources</directory>
+                        <includes>
+                            <include>**/*.html</include>
+                            <include>**/*.js</include>
+                            <include>**/*.json</include>
+                            <include>**/*.css</include>
+                            <include>**/*.png</include>
+                            <include>**/*.gif</include>
+                            <include>**/*.eot</include>
+                            <include>**/*.svg</include>
+                            <include>**/*.ttf</include>
+                            <include>**/*.woff</include>
+                            <include>**/*.woff2</include>
+                        </includes>
                     </resource>
                 </resources>
             </build>

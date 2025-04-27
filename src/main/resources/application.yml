@@ -2,14 +2,21 @@ server:
   port: 8080
 
 spring:
+  application:
+    name: ddbb
   data:
     mongodb:
       database: ddbb
       host: 127.0.0.1
       port: 27017
+  web:
+    resources:
+      static-locations: classpath:/static/
+
+
 cbs:
   imagesPath: file:/D:/ddbb_images/
-  imagesUrlContext: images
+  imagesUrlContext: ddbb_u_images
 
 ddbb:
   allowSendSms: true

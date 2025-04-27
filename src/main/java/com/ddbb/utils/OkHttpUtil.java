@@ -5,11 +5,70 @@ import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.springframework.stereotype.Service;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import java.io.IOException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class OkHttpUtil {
     private static final OkHttpClient okHttpClient = new OkHttpClient();
+    private static final OkHttpClient okHttpClientUnsafeHttps = getUnsafeOkHttpClient();
+
+
+    public static OkHttpClient getUnsafeOkHttpClient() {
+        try {
+            // 创建一个信任所有证书的TrustManager
+            final TrustManager[] trustAllCerts = new TrustManager[]{
+                    new X509TrustManager() {
+                        @Override
+                        public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                        }
+
+                        @Override
+                        public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                        }
+
+                        @Override
+                        public X509Certificate[] getAcceptedIssuers() {
+                            return new X509Certificate[0];
+                        }
+                    }
+            };
+
+            // 创建一个不验证证书的 SSLContext，并使用上面的TrustManager初始化
+            SSLContext sslContext = SSLContext.getInstance("SSL");
+            sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+
+            // 使用上面创建的SSLContext创建一个SSLSocketFactory
+            javax.net.ssl.SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+
+            OkHttpClient.Builder builder = new OkHttpClient.Builder();
+            builder.sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0]);
+            builder.hostnameVerifier((hostname, session) -> true);
+            builder.readTimeout(1, TimeUnit.MINUTES);
+
+            return builder.build();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public static void main(String[] args) throws Exception {
+
+        // 发送请求
+        Request request = new Request.Builder()
+                .url("https://example.com")
+                .build();
+
+        Response response = getUnsafeOkHttpClient().newCall(request).execute();
+        System.out.println(response.body().string());
+    }
 
     /**
      * get请求。参数请拼在url后面
@@ -49,6 +108,11 @@ public class OkHttpUtil {
     }
 
     public static String doPost(String url, JSONObject jsonObject){
+        return doPost(url,jsonObject,null);
+    }
+
+
+    public static String doPost(String url, JSONObject jsonObject,Map<String,String> headersMap){
         String json = jsonObject.toJSONString();
         RequestBody body = RequestBody.create(
                 MediaType.parse("application/json"), json);
@@ -56,10 +120,16 @@ public class OkHttpUtil {
         Request request = new Request.Builder()
                 .url(url)
                 .post(body)
+                .headers(buildHeader(headersMap))
                 .build();
         Response response = null;
         try{
-            Call call = okHttpClient.newCall(request);
+            Call call;
+            if(url.indexOf("https")>=0){
+                call = okHttpClientUnsafeHttps.newCall(request);
+            }else{
+                call = okHttpClient.newCall(request);
+            }
             response = call.execute();
 
             //获取Http Status Code.其中200表示成功
@@ -83,5 +153,17 @@ public class OkHttpUtil {
             }
         }
 
+    }
+
+    private static Headers buildHeader(Map<String,String> map){
+        Headers headers =null;
+        okhttp3.Headers.Builder headersBuilder = new okhttp3.Headers.Builder();
+        if (map != null && map.size()>0) {
+            map.forEach((k,v)->{
+                headersBuilder.add(k, v);
+            });
+        }
+        headers = headersBuilder.build();
+        return headers;
     }
 }

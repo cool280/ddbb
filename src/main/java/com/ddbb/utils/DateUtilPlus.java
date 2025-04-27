@@ -5,6 +5,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
 import java.util.Date;
 
 public class DateUtilPlus {
@@ -121,7 +122,7 @@ public class DateUtilPlus {
      * @param date
      * @return
      */
-    public static LocalDateTime utilDate2LocalDateTime(java.util.Date date){
+    public static LocalDateTime utilDate2LocalDateTime(Date date){
         Instant instant = date.toInstant();
         ZoneId zone = ZoneId.systemDefault();
         LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, zone);
@@ -133,7 +134,7 @@ public class DateUtilPlus {
      * @param date
      * @return yyyy-MM-dd HH:mm:ss
      */
-    public static String utilDate2StringYmdHms(java.util.Date date){
+    public static String utilDate2StringYmdHms(Date date){
         LocalDateTime ldt = utilDate2LocalDateTime(date);
         return localDateTime2StringYmdHms(ldt);
     }
@@ -142,7 +143,7 @@ public class DateUtilPlus {
      * @param date
      * @return yyyy-MM-dd
      */
-    public static String utilDate2StringYmd(java.util.Date date){
+    public static String utilDate2StringYmd(Date date){
         LocalDateTime ldt = utilDate2LocalDateTime(date);
         return localDateTime2StringYmd(ldt);
     }
@@ -155,7 +156,7 @@ public class DateUtilPlus {
     public static Date localDate2UtilDate(LocalDate localDate){
         ZoneId zone = ZoneId.systemDefault();
         Instant instant = localDate.atStartOfDay().atZone(zone).toInstant();
-        java.util.Date date = Date.from(instant);
+        Date date = Date.from(instant);
         return date;
     }
 
@@ -177,7 +178,7 @@ public class DateUtilPlus {
     public static Date localDateTime2UtilDate(LocalDateTime localDateTime){
         ZoneId zone = ZoneId.systemDefault();
         Instant instant = localDateTime.atZone(zone).toInstant();
-        java.util.Date date = Date.from(instant);
+        Date date = Date.from(instant);
         return date;
     }
 
@@ -265,6 +266,25 @@ public class DateUtilPlus {
         return plus.getHour();
     }
 
+    public static LocalDate getNextMonthFirstDay(){
+        // 获取当前日期
+        LocalDate today = LocalDate.now();
+        // 获取下个月的第一天
+        LocalDate nextMonthFirstDay = today.with(TemporalAdjusters.firstDayOfNextMonth());
+        return nextMonthFirstDay;
+    }
+
+    /**
+     * 获取d所在月份的下一个月
+     * @param d
+     * @return
+     */
+    public static LocalDate getNextMonthFirstDay(LocalDate d){
+        // 获取d下个月的第一天
+        LocalDate nextMonthFirstDay = d.with(TemporalAdjusters.firstDayOfNextMonth());
+        return nextMonthFirstDay;
+    }
+
 
     public static void main(String[] args) {
         System.out.println(getCurrentTimeString());
@@ -296,5 +316,8 @@ public class DateUtilPlus {
 
         LocalDateTime ldt = LocalDateTime.now().with(LocalTime.of(23,9));
         System.out.println(ldt.plusHours(1).getHour());
+
+        System.out.println(getNextMonthFirstDay());
+        System.out.println(getNextMonthFirstDay(string2LocalDate("2025-12-09")));
     }
 }
