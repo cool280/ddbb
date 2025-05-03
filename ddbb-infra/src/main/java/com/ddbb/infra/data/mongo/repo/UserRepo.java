@@ -1,0 +1,50 @@
+package com.ddbb.infra.data.mongo.repo;
+
+import com.ddbb.internal.enums.UserType;
+import com.ddbb.infra.data.mongo.MongoBaseRepository;
+import com.ddbb.infra.data.mongo.entity.UserEntity;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+/**
+ db.user.createIndex({"qid":1},{"name":"uk_qid",unique: true,"background":true})
+ db.user.createIndex({"aid":1},{"name":"uk_aid",unique: true,"background":true})
+ db.user.createIndex({"phone":1},{"name":"uk_phone",unique: true,"background":true})
+ */
+@Repository
+public class UserRepo extends MongoBaseRepository<UserEntity> {
+    @Override
+    public String getCollectionName() {
+        return "user";
+    }
+
+    /**
+     * 根据qid查人
+     * @param qid
+     * @return
+     */
+    public UserEntity findByQid(Long qid){
+        Criteria criteria = Criteria.where("qid").is(qid);
+        return findOne(criteria);
+    }
+    /**
+     * 根据qid查人
+     * @param phone
+     * @return
+     */
+    public UserEntity findByPhone(String phone){
+        Criteria criteria = Criteria.where("phone").is(phone);
+        return findOne(criteria);
+    }
+
+    /**
+     * 明星助教
+     * @return
+     */
+    public List<UserEntity> getStarCoach(){
+        Criteria criteria = Criteria.where("userType").is(UserType.ASSISTANT_COACH.getCode()).and("starLevel").gt(0);
+        return findAll(criteria);
+    }
+}
