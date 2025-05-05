@@ -8,6 +8,8 @@ import com.ddbb.controller.request.NearbyHallRequest;
 import com.ddbb.controller.response.NearbyHallResponse;
 import com.ddbb.service.nearby.NearbyService;
 import com.ddbb.internal.utils.ObjectConverter;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -21,18 +23,21 @@ import java.util.List;
 @DdbbController
 @RequestMapping("/nearby")
 @Slf4j
+@Api(tags = "附近")
 public class NearbyController extends BaseController {
     @Autowired
     private NearbyService nearbyService;
 
     @ResponseBody
     @PostMapping("/coach")
-    public BaseResult getNearbyAssistantCoach(@RequestBody NearbyAssistantCoachRequest nearbyRequest, HttpServletRequest httpServletRequest){
+    @ApiOperation(value = "附近的助教")
+    public BaseResult<List<NearbyAssistantCoachResponse>> getNearbyAssistantCoach(@RequestBody NearbyAssistantCoachRequest nearbyRequest, HttpServletRequest httpServletRequest){
         log.info("getNearbyAssistantCoach start: {}", ObjectConverter.o2s(nearbyRequest));
         List<NearbyAssistantCoachResponse> ret = nearbyService.getNearbyAssistantCoach(nearbyRequest);
         if(ret !=null){
             ret.forEach(e->{
                 e.setAvatar(getImageAbsoluteUrl(httpServletRequest,e.getAvatar()));
+                handlePhoto(e,httpServletRequest);
             });
         }
         /*
@@ -54,9 +59,10 @@ public class NearbyController extends BaseController {
 
     @ResponseBody
     @PostMapping("/starCoach")
-    public BaseResult getStarAssistantCoach(@RequestBody NearbyAssistantCoachRequest nearbyRequest, HttpServletRequest httpServletRequest){
-        log.info("getStarAssistantCoach start: {}", ObjectConverter.o2s(nearbyRequest));
-        List<NearbyAssistantCoachResponse> ret = nearbyService.getStarAssistantCoach(nearbyRequest);
+    @ApiOperation(value = "明星助教")
+    public BaseResult<List<NearbyAssistantCoachResponse>> getStarAssistantCoach(HttpServletRequest httpServletRequest){
+        log.info("getStarAssistantCoach >>> start");
+        List<NearbyAssistantCoachResponse> ret = nearbyService.getStarAssistantCoach();
         if(ret !=null){
             ret.forEach(e->{
                 e.setAvatar(getImageAbsoluteUrl(httpServletRequest,e.getAvatar()));
@@ -83,7 +89,8 @@ public class NearbyController extends BaseController {
 
     @ResponseBody
     @PostMapping("/hall")
-    public BaseResult getNearbyHall(@RequestBody NearbyHallRequest nearbyRequest, HttpServletRequest httpServletRequest){
+    @ApiOperation(value = "附近的球房")
+    public BaseResult<List<NearbyHallResponse>> getNearbyHall(@RequestBody NearbyHallRequest nearbyRequest, HttpServletRequest httpServletRequest){
         log.info("getNearbyHall start: {}", ObjectConverter.o2s(nearbyRequest));
         List<NearbyHallResponse> ret = nearbyService.getNearbyHall(nearbyRequest);
 

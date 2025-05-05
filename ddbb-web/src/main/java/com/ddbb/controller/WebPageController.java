@@ -1,5 +1,6 @@
 package com.ddbb.controller;
 
+import io.swagger.annotations.Api;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
  *         </dependency>
  */
 @Controller
+@Api(tags = "忽略，通过controller跳转的页面")
 public class WebPageController {
     @GetMapping("/index888")
     public String home() {

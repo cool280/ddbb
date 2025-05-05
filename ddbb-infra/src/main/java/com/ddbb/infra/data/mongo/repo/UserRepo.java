@@ -3,8 +3,12 @@ package com.ddbb.infra.data.mongo.repo;
 import com.ddbb.internal.enums.UserType;
 import com.ddbb.infra.data.mongo.MongoBaseRepository;
 import com.ddbb.infra.data.mongo.entity.UserEntity;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -46,5 +50,103 @@ public class UserRepo extends MongoBaseRepository<UserEntity> {
     public List<UserEntity> getStarCoach(){
         Criteria criteria = Criteria.where("userType").is(UserType.ASSISTANT_COACH.getCode()).and("starLevel").gt(0);
         return findAll(criteria);
+    }
+
+    /**
+     * 根据qid更新，为null的值不更新
+     * @param entity
+     */
+    public void updateByQidWithoutNull(UserEntity entity){
+        updateByQid(entity,false);
+    }
+    /**
+     * 根据qid更新，为null的值也更新
+     * @param entity
+     */
+    public void updateByQidWithNull(UserEntity entity){
+        updateByQid(entity,true);
+    }
+
+    /**
+     * 根据qid更新
+     * @param entity
+     * @param withNull    为null的值是否更新
+     */
+    private void updateByQid(UserEntity entity,boolean withNull){
+        Criteria criteria = Criteria.where("qid").is(entity.getQid());
+        Query q = new Query(criteria);
+
+        Update u = new Update().set("qid",entity.getQid());
+        if(withNull || StringUtils.isNotBlank(entity.getPhone())){
+            u.set("phone",entity.getPhone());
+        }
+        if(withNull || StringUtils.isNotBlank(entity.getNickname())){
+            u.set("nickname",entity.getNickname());
+        }
+        if(withNull || entity.getAge()!=null){
+            u.set("age",entity.getAge());
+        }
+        if(withNull || entity.getGender()!=null){
+            u.set("gender",entity.getGender());
+        }
+        if(withNull || StringUtils.isNotBlank(entity.getAvatar())){
+            u.set("avatar",entity.getAvatar());
+        }
+        if(withNull || !CollectionUtils.isEmpty(entity.getPhoto())){
+            u.set("photo",entity.getPhoto());
+        }
+        if(withNull || StringUtils.isNotBlank(entity.getCityCode())){
+            u.set("cityCode",entity.getCityCode());
+        }
+        if(withNull || StringUtils.isNotBlank(entity.getCityName())){
+            u.set("cityName",entity.getCityName());
+        }
+        if(withNull || StringUtils.isNotBlank(entity.getHometown())){
+            u.set("hometown",entity.getHometown());
+        }
+        if(withNull || StringUtils.isNotBlank(entity.getHobby())){
+            u.set("hobby",entity.getHobby());
+        }
+        if(withNull || StringUtils.isNotBlank(entity.getIntro())){
+            u.set("intro",entity.getIntro());
+        }
+        if(withNull || (null != entity.getCoordinate() && entity.getCoordinate().length == 2)){
+            u.set("coordinate",entity.getCoordinate());
+        }
+        if(withNull || entity.getDan()!=null){
+            u.set("dan",entity.getDan());
+        }
+        if(withNull || entity.getLevel()!=null){
+            u.set("level",entity.getLevel());
+        }
+        if(withNull || StringUtils.isNotBlank(entity.getLevelDesc())){
+            u.set("levelDesc",entity.getLevelDesc());
+        }
+        if(withNull || entity.getScore()!=null){
+            u.set("score",entity.getScore());
+        }
+        if(withNull || entity.getPrice()!=null){
+            u.set("price",entity.getPrice());
+        }
+        if(withNull || StringUtils.isNotBlank(entity.getWorkWeekDay())){
+            u.set("workWeekDay",entity.getWorkWeekDay());
+        }
+        if(withNull || entity.getWorkTimeStart()!=null){
+            u.set("workTimeStart",entity.getWorkTimeStart());
+        }
+        if(withNull || entity.getWorkTimeEnd()!=null){
+            u.set("workTimeEnd",entity.getWorkTimeEnd());
+        }
+        if(withNull || entity.getUserType()!=null){
+            u.set("userType",entity.getUserType());
+        }
+        if(withNull || entity.getJobType()!=null){
+            u.set("jobType",entity.getJobType());
+        }
+        if(withNull || entity.getWorkHallId()!=null){
+            u.set("workHallId",entity.getWorkHallId());
+        }
+
+        mongoTemplate.updateMulti(q,u,getCollectionName());
     }
 }

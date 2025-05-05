@@ -3,11 +3,14 @@ package com.ddbb.service.nearby;
 import com.ddbb.controller.request.*;
 import com.ddbb.controller.response.NearbyAssistantCoachResponse;
 import com.ddbb.controller.response.NearbyHallResponse;
-import com.ddbb.infra.data.mongo.repo.UserRepo;
+import com.ddbb.infra.data.mongo.entity.CoachWorkplaceEntity;
+import com.ddbb.infra.data.mongo.repo.CoachWorkplaceReop;
 import com.ddbb.infra.data.mongo.GeoQueryContext;
 import com.ddbb.infra.data.mongo.repo.HallRepo;
 import com.ddbb.infra.data.mongo.entity.UserEntity;
 import com.ddbb.infra.data.mongo.entity.HallEntity;
+import com.ddbb.infra.data.mongo.repo.UserRepo;
+import com.ddbb.internal.constants.DdbbConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,14 +24,13 @@ import java.util.List;
 @Service
 @Slf4j
 public class NearbyService {
-    //杨浦百联滨江
-    private static double DEFAULT_LONGITUDE = 121.544732;
-    private static double DEFAULT_LATITUDE = 31.271186;
 
     @Autowired
-    private UserRepo repo;
+    private CoachWorkplaceReop coachWorkplaceReop;
     @Autowired
     private HallRepo hallRepo;
+    @Autowired
+    private UserRepo userRepo;
 
     /**
      * 获取附近的助教
@@ -36,17 +38,22 @@ public class NearbyService {
      * @return
      */
     public List<NearbyAssistantCoachResponse> getNearbyAssistantCoach(NearbyAssistantCoachRequest nearbyRequest) {
-        GeoResults<UserEntity> geoResults = repo.geoQuery(checkParam(nearbyRequest));
+        GeoResults<CoachWorkplaceEntity> geoResults = coachWorkplaceReop.geoQuery(checkParam(nearbyRequest));
 
         List<NearbyAssistantCoachResponse> ret = new ArrayList<>();
         if (geoResults != null) {
-            List<GeoResult<UserEntity>> content = geoResults.getContent();
+            List<GeoResult<CoachWorkplaceEntity>> content = geoResults.getContent();
             content.forEach(e -> {
-                UserEntity coach = e.getContent();
+                CoachWorkplaceEntity coach = e.getContent();
                 double distance = e.getDistance().getValue();
 
+                UserEntity user = userRepo.findByQid(coach.getQid());
+                if(user == null){
+                    return;
+                }
+
                 NearbyAssistantCoachResponse r = new NearbyAssistantCoachResponse();
-                BeanUtils.copyProperties(coach, r);
+                BeanUtils.copyProperties(user, r);
                 r.setDistanceKm(distance);
                 ret.add(r);
             });
@@ -56,11 +63,11 @@ public class NearbyService {
 
     /**
      * 获取明星助教
-     * @param nearbyRequest
+     * @param
      * @return
      */
-    public List<NearbyAssistantCoachResponse> getStarAssistantCoach(NearbyAssistantCoachRequest nearbyRequest) {
-        List<UserEntity> list = repo.getStarCoach();
+    public List<NearbyAssistantCoachResponse> getStarAssistantCoach() {
+        List<UserEntity> list = userRepo.getStarCoach();
 
         List<NearbyAssistantCoachResponse> ret = new ArrayList<>();
         list.forEach(e -> {
@@ -96,19 +103,19 @@ public class NearbyService {
 
     private GeoQueryContext checkParam(NearbyRequest nearbyRequest){
         if (nearbyRequest.getLongitude() == null) {
-            nearbyRequest.setLongitude(DEFAULT_LONGITUDE);
+            nearbyRequest.setLongitude(DdbbConstant.GeoQueryDefault.DEFAULT_LONGITUDE);
         }
         if (nearbyRequest.getLatitude() == null) {
-            nearbyRequest.setLatitude(DEFAULT_LATITUDE);
+            nearbyRequest.setLatitude(DdbbConstant.GeoQueryDefault.DEFAULT_LATITUDE);
         }
         if(nearbyRequest.getMaxCount() == null){
-            nearbyRequest.setMaxCount(10);
+            nearbyRequest.setMaxCount(DdbbConstant.GeoQueryDefault.MAX_COUNT);
         }
         if(nearbyRequest.getMinDistanceKm() == null){
-            nearbyRequest.setMinDistanceKm(0d);
+            nearbyRequest.setMinDistanceKm(DdbbConstant.GeoQueryDefault.MIN_DISTANCE_KM);
         }
         if(nearbyRequest.getMaxDistanceKm() == null){
-            nearbyRequest.setMaxDistanceKm(5d);
+            nearbyRequest.setMaxDistanceKm(DdbbConstant.GeoQueryDefault.MAX_DISTANCE_KM);
         }
 
 

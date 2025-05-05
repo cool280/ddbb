@@ -1,5 +1,6 @@
 package com.ddbb.controller.response;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -7,74 +8,49 @@ import java.util.List;
 
 @Data
 public class NearbyHallResponse extends BaseResponse implements Serializable, IWithPhotoVO {
-    /**
-     * 球房id
-     */
+    @ApiModelProperty(value = "球房id",required = true)
     private Long hallId;
-    /**
-     * 球房名称
-     */
+    @ApiModelProperty(value = "球房名称",required = true)
     private String nickname;
-    /**
-     * 教练数量
-     */
+    @ApiModelProperty(value = "教练数量",required = true)
     private Integer coachCount;
-    /**
-     * 球房头像
-     */
+    @ApiModelProperty(value = "球房头像",required = true)
     private String avatar;
+    @ApiModelProperty(value = "球房照片",required = false,example = "https://www.ddbb365.com/ddbb_u_images/1.jpg,https://www.ddbb365.com/ddbb_u_images/2.jpg")
     private List<String> photo;
+    @ApiModelProperty(value = "所在城市code",required = false)
     private String cityCode;
+    @ApiModelProperty(value = "所在城市name",required = true)
     private String cityName;
-    /**
-     * 球房评分
-     */
+    @ApiModelProperty(value = "球房评分",required = true)
     private Double score;
-    /**
-     * 中八价格  元/时
-     */
+    @ApiModelProperty(value = "中八价格  元/时")
     private Double tablePrice;
-    /**
-     * 斯诺克价格   元/时
-     */
+    @ApiModelProperty(value = "斯诺克价格   元/时")
     private Double snookerPrice;
-    /**
-     * 包厢价格   元/时
-     */
+    @ApiModelProperty(value = "包厢价格   元/时")
     private Double vipRoomPrice;
-
+    @ApiModelProperty(value = "地址",required = true)
     private String address;
+    @ApiModelProperty(value = "电话")
     private String tel;
+    @ApiModelProperty(value = "网站")
     private String website;
-    /**
-     * 面积
-     */
+    @ApiModelProperty(value = "面积")
     private Integer area;
-
-    /**
-     * 中八台子数量
-     */
+    @ApiModelProperty(value = "中八台子数量")
     private Integer tableCount;
-    /**
-     * 斯诺克台子数量
-     */
+    @ApiModelProperty(value = "斯诺克台子数量")
     private Integer snookerCount;
-    /**
-     * vip包房数量
-     */
+    @ApiModelProperty(value = "vip包房数量")
     private Integer vipRoomCount;
-    /**
-     * 营业时间10:00 - 2:00
-     */
+    @ApiModelProperty(value = "营业时间",example = "10:00 - 2:00")
     private String workTime;
-    /**
-     * 乘车路线
-     */
+    @ApiModelProperty(value = "乘车路线",example = "地铁12号线宁国路站")
     private String wayTo;
-    /**
-     * 自驾停车优惠
-     */
+    @ApiModelProperty(value = "自驾停车优惠",example = "免费停车4小时")
     private String parkingDiscount;
+    @ApiModelProperty(value = "距离km")
     private Double distanceKm;
 
 }

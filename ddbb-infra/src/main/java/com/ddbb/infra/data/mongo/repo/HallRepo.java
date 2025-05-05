@@ -1,5 +1,6 @@
 package com.ddbb.infra.data.mongo.repo;
 
+import com.ddbb.infra.data.mongo.MongoBaseGeoRepository;
 import com.ddbb.infra.data.mongo.MongoBaseRepository;
 import com.ddbb.infra.data.mongo.entity.HallEntity;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Repository;
  db.hall.createIndex({"hallId":1},{"name":"uk_hallId",unique: true,"background":true})
  */
 @Repository
-public class HallRepo extends MongoBaseRepository<HallEntity> {
+public class HallRepo extends MongoBaseGeoRepository<HallEntity> {
     @Override
     public String getCollectionName() {
         return "hall";

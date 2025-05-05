@@ -6,6 +6,8 @@ import com.ddbb.controller.request.CoachRegisterRequest;
 import com.ddbb.controller.request.LoginRequest;
 import com.ddbb.controller.response.LoginResponse;
 import com.ddbb.service.login.LoginService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +15,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
 @RestController
 @DdbbController
 @RequestMapping("/login")
+@Api(tags = "登录、注册")
 public class LoginController extends BaseController{
 
     private static final Pattern pattern = Pattern.compile("^1[3-9]\\d{9}$");
@@ -25,6 +31,7 @@ public class LoginController extends BaseController{
 
     @PostMapping("/sendSmsCode")
     @ResponseBody
+    @ApiOperation(value = "发送验证码")
     public BaseResult sendSmsCode(@RequestBody LoginRequest request){
         String phone = request.getPhone();
         if(StringUtils.isBlank(phone)){
@@ -45,7 +52,9 @@ public class LoginController extends BaseController{
     }
     @PostMapping("/doLogin")
     @ResponseBody
-    public BaseResult login(@RequestBody LoginRequest request){
+    @ApiOperation(value = "登录")
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "ok", response = LoginResponse.class)})
+    public BaseResult<LoginResponse> login(@RequestBody LoginRequest request){
         String phone = request.getPhone();
         if(StringUtils.isBlank(phone)){
             return ERROR("phone is null");
@@ -66,11 +75,8 @@ public class LoginController extends BaseController{
                 return ERROR(resp.getMsg());
             }
 
-            JSONObject json = new JSONObject();
-            json.put("isNewUser",resp.isNewUser());
-            json.put("qid",resp.getQid());
 
-            return OK(json);
+            return OK(resp);
         } catch (Exception e) {
             e.printStackTrace();
             return ERROR("登录失败，请稍后重试!");
@@ -79,6 +85,7 @@ public class LoginController extends BaseController{
 
     @PostMapping("/coachRegister")
     @ResponseBody
+    @ApiOperation(value = "助教注册")
     public BaseResult coachRegister(@RequestBody CoachRegisterRequest request){
         return null;
     }

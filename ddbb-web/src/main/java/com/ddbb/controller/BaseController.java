@@ -1,11 +1,19 @@
 package com.ddbb.controller;
 
 
+import com.ddbb.controller.response.ImagePath;
+import com.ddbb.internal.utils.MD5Util;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 
 public class BaseController {
+    //硬盘上的路径
+    @Value("${cbs.imagesPath}")
+    private String imagesPath;
+
+    //url路径中的context
     @Value("${cbs.imagesUrlContext}")
     private String imagesUrlContext;
 
@@ -50,4 +58,6 @@ public class BaseController {
         String url1 = url.substring(0,pos2);
         return url1 + "/" +imagesUrlContext+"/"+ imageRelativePath;
     }
+
+
 }

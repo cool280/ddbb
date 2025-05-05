@@ -1,6 +1,7 @@
 package com.ddbb.service.challenge;
 
 import com.ddbb.controller.request.ChallengeRequest;
+import com.ddbb.internal.constants.DdbbConstant;
 import com.ddbb.internal.enums.ChallengeRole;
 import com.ddbb.internal.enums.ChallengeStatus;
 import com.ddbb.infra.data.mongo.entity.ChallengeEntity;
@@ -86,10 +87,17 @@ public class ChallengeService {
         to.setAid(SnowflakeIdUtil.getInstance().nextId());
         to.setChallengeRole(ChallengeRole.RECEIVE.getCode());
 
+        ChallengeEntity sys = new ChallengeEntity();
+        BeanUtils.copyProperties(from,sys);
+        to.setOwner(DdbbConstant.SYS_QID);
+        to.setAid(SnowflakeIdUtil.getInstance().nextId());
+        to.setChallengeRole(ChallengeRole.SYSTEM.getCode());
+
 
 
         challengeRepo.insert(from);
         challengeRepo.insert(to);
+        challengeRepo.insert(sys);
         log.info("[createChallengeRecord] >>> from:{},to:{}, done",from,to);
     }
 

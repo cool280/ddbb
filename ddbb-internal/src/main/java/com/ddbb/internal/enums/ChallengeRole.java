@@ -1,6 +1,7 @@
 package com.ddbb.internal.enums;
 
 public enum ChallengeRole {
+    SYSTEM(0,"系统"),
     LAUNCH(1,"发起方"),
     RECEIVE(2,"接受方"),
     ;

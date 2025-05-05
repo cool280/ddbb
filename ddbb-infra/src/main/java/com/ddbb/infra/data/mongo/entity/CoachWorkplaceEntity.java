@@ -23,5 +23,5 @@ public class CoachWorkplaceEntity extends MongoEntity{
     /**
      * 是否工作在这个球房
      */
-    private Integer workHere;
+    private Boolean workHere;
 }
