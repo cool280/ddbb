@@ -20,8 +20,4 @@ public class CoachWorkplaceEntity extends MongoEntity{
      * 球房id的坐标
      */
     private Double[] coordinate;
-    /**
-     * 是否工作在这个球房
-     */
-    private Boolean workHere;
 }

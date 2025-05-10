@@ -9,6 +9,4 @@ public class WorkplaceRequest extends BaseRequest{
     private Long qid;
     @ApiModelProperty(value = "可出台球房id",required = true)
     private Long hallId;
-    @ApiModelProperty(value = "是否工作在这个球房",required = false)
-    private Boolean workHere;
 }

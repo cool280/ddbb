@@ -27,7 +27,7 @@ public class ProfileTest {
         request.setQid(134L);
         request.setHallId(1L);
 
-        profileService.addWorkplace(request);
+        profileService.addPresentHall(request);
         System.out.println("============= done ==============");
     }
     @Test

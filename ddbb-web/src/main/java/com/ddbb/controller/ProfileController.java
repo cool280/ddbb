@@ -1,7 +1,7 @@
 package com.ddbb.controller;
 
+import com.ddbb.controller.request.ChangeProfileRequest;
 import com.ddbb.controller.request.WorkplaceRequest;
-import com.ddbb.controller.response.ImagePath;
 import com.ddbb.internal.annotate.DdbbController;
 import com.ddbb.service.profile.ProfileService;
 import io.swagger.annotations.Api;
@@ -24,14 +24,14 @@ public class ProfileController extends BaseController{
     private ProfileService profileService;
 
     @ResponseBody
-    @PostMapping("/addWorkplace")
+    @PostMapping("/addPresentHall")
     @ApiOperation(value = "助教添加可出台球房")
-    public BaseResult addWorkplace(@RequestBody WorkplaceRequest workplaceRequest){
+    public BaseResult addPresentHall(@RequestBody WorkplaceRequest workplaceRequest){
         if(workplaceRequest.getHallId() == null || workplaceRequest.getQid() == null){
             return BaseResult.ERROR("参数有毛病");
         }
         try {
-            profileService.addWorkplace(workplaceRequest);
+            profileService.addPresentHall(workplaceRequest);
             return BaseResult.OK();
         } catch (Exception e) {
             e.printStackTrace();
@@ -76,5 +76,42 @@ public class ProfileController extends BaseController{
         }
     }
 
+    @ResponseBody
+    @PostMapping("/changeProfile")
+    @ApiOperation(value = "修改个人资料，修改啥就在参数里写啥，为null的不会更新")
+    public BaseResult changeProfile(@RequestBody ChangeProfileRequest request){
+        try {
+            profileService.changeProfile(request);
+            return BaseResult.OK();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return BaseResult.ERROR(e);
+        }
+    }
 
+    @ResponseBody
+    @PostMapping("/setMyWorkplace")
+    @ApiOperation(value = "助教设置工作球房，同时将工作类型设置成驻场助教")
+    public BaseResult setMyWorkplace(@RequestBody WorkplaceRequest request){
+        try {
+            profileService.setMyWorkplace(request);
+            return BaseResult.OK();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return BaseResult.ERROR(e);
+        }
+    }
+
+    @ResponseBody
+    @PostMapping("/setFreeCoach")
+    @ApiOperation(value = "助教设置工作类型为自由职业")
+    public BaseResult setFreeCoach(@RequestBody WorkplaceRequest request){
+        try {
+            profileService.setFreeCoach(request);
+            return BaseResult.OK();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return BaseResult.ERROR(e);
+        }
+    }
 }

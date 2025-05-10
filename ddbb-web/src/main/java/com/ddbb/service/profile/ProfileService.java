@@ -1,5 +1,6 @@
 package com.ddbb.service.profile;
 
+import com.ddbb.controller.request.ChangeProfileRequest;
 import com.ddbb.controller.request.WorkplaceRequest;
 import com.ddbb.controller.response.ImagePath;
 import com.ddbb.infra.data.mongo.entity.CoachWorkplaceEntity;
@@ -8,9 +9,12 @@ import com.ddbb.infra.data.mongo.entity.UserEntity;
 import com.ddbb.infra.data.mongo.repo.CoachWorkplaceReop;
 import com.ddbb.infra.data.mongo.repo.HallRepo;
 import com.ddbb.infra.data.mongo.repo.UserRepo;
+import com.ddbb.internal.enums.JobType;
+import com.ddbb.internal.enums.UserType;
 import com.ddbb.internal.utils.SnowflakeIdUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -37,9 +41,13 @@ public class ProfileService {
      * 助教添加可出台球房
      * @param workplaceRequest
      */
-    public void addWorkplace(WorkplaceRequest workplaceRequest) throws Exception {
+    public void addPresentHall(WorkplaceRequest workplaceRequest) throws Exception {
         Long qid = workplaceRequest.getQid();
         Long hallId = workplaceRequest.getHallId();
+        UserEntity user = userRepo.findByQid(qid);
+        if(user.getUserType() == null || UserType.ASSISTANT_COACH.getCode() != user.getUserType()){
+            throw new Exception("只有助教才能添加可出台球房");
+        }
 
         boolean b = coachWorkplaceReop.isCoachWorkplace(qid, hallId);
         if(b){
@@ -56,9 +64,66 @@ public class ProfileService {
         entity.setQid(qid);
         entity.setHallId(hallId);
         entity.setCoordinate(hall.getCoordinate());
-        entity.setWorkHere(workplaceRequest.getWorkHere());
 
         coachWorkplaceReop.insert(entity);
+    }
+
+    /**
+     * 助教设置工作球房
+     * @param workplaceRequest
+     */
+    public void setMyWorkplace(WorkplaceRequest workplaceRequest) throws Exception {
+        Long qid = workplaceRequest.getQid();
+        Long hallId = workplaceRequest.getHallId();
+
+        //查球房经纬度
+        HallEntity hall = hallRepo.findByHallId(hallId);
+        if(hall == null){
+            throw new Exception("hall id error");
+        }
+
+        UserEntity user = userRepo.findByQid(qid);
+        if(user.getUserType() == null || UserType.ASSISTANT_COACH.getCode() != user.getUserType()){
+            throw new Exception("只有助教才能设置工作球房");
+        }
+        //更新user
+        user.setJobType(JobType.FIX_HALL.getCode());
+        user.setWorkHallId(hallId);
+        user.setCoordinate(hall.getCoordinate());
+
+        userRepo.updateByQidWithNull(user);
+
+        //更新可出台球房
+        boolean b = coachWorkplaceReop.isCoachWorkplace(qid, hallId);
+        if(!b){
+            CoachWorkplaceEntity entity = new CoachWorkplaceEntity();
+            entity.setAid(SnowflakeIdUtil.getInstance().nextId());
+            entity.setQid(qid);
+            entity.setHallId(hallId);
+            entity.setCoordinate(hall.getCoordinate());
+
+            coachWorkplaceReop.insert(entity);
+        }
+
+    }
+
+    /**
+     * 助教设置工作类型为自由职业
+     * @param workplaceRequest
+     */
+    public void setFreeCoach(WorkplaceRequest workplaceRequest) throws Exception {
+        Long qid = workplaceRequest.getQid();
+
+        UserEntity user = userRepo.findByQid(qid);
+        if(user.getUserType() == null || UserType.ASSISTANT_COACH.getCode() != user.getUserType()){
+            throw new Exception("只有助教才能设置为自由职业");
+        }
+        //更新user
+        user.setJobType(JobType.FREE_PERSON.getCode());
+        user.setWorkHallId(null);
+        user.setCoordinate(null);
+
+        userRepo.updateByQidWithNull(user);
     }
 
     /**
@@ -138,5 +203,20 @@ public class ProfileService {
         userUpdate.setQid(qid);
         userUpdate.setAvatar(imgPathObj.getAvatarUrlRelativePath() + multipartFile.getOriginalFilename());
         userRepo.updateByQidWithoutNull(userUpdate);
+    }
+
+    public void changeProfile(ChangeProfileRequest request) throws Exception {
+        Long qid = request.getQid();
+        if(qid == null){
+            throw new Exception("qid is null");
+        }
+        UserEntity user = userRepo.findByQid(qid);
+        if(user == null){
+            throw new Exception("qid is wrong");
+        }
+
+        UserEntity updateUser = new UserEntity();
+        BeanUtils.copyProperties(request,updateUser);
+        userRepo.updateByQidWithoutNull(updateUser);
     }
 }
