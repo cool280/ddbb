@@ -9,7 +9,7 @@ import java.io.Serializable;
 @Data
 public class NearbyRequest extends BaseRequest implements Serializable {
     @ApiModelProperty(value = "请求者id",required = true)
-    private Long qid;
+    private Long uid;
     @ApiModelProperty(value = "经度",required = true)
     private Double longitude;
     @ApiModelProperty(value = "纬度",required = true)

@@ -27,7 +27,7 @@ public class ProfileController extends BaseController{
     @PostMapping("/addPresentHall")
     @ApiOperation(value = "助教添加可出台球房")
     public BaseResult addPresentHall(@RequestBody WorkplaceRequest workplaceRequest){
-        if(workplaceRequest.getHallId() == null || workplaceRequest.getQid() == null){
+        if(workplaceRequest.getHallId() == null || workplaceRequest.getUid() == null){
             return BaseResult.ERROR("参数有毛病");
         }
         try {
@@ -49,7 +49,7 @@ public class ProfileController extends BaseController{
      *             }catch (Exception e){}
      *         }) ;
      * @param request
-     * @param qid
+     * @param uid
      * @param imageType a（头像）| p(照片)
      * @param files
      * @return
@@ -58,14 +58,14 @@ public class ProfileController extends BaseController{
     @PostMapping("/uploadCoachPhoto")
     @ApiOperation(value = "添加助教照片，此接口参数需要使用form格式，多个图片使用同名参数files")
     public BaseResult uploadCoachPhoto(HttpServletRequest request,
-                                       @RequestParam("qid") Long qid,
+                                       @RequestParam("uid") Long uid,
                                        @RequestParam("imageType") String imageType,
                                        @RequestParam List<MultipartFile> files){
         try {
             if("p".equals(imageType)){
-                profileService.uploadCoachPhoto(qid,files);
+                profileService.uploadCoachPhoto(uid,files);
             }else if("a".equals(imageType)){
-                profileService.uploadCoachAvatar(qid,files.get(0));
+                profileService.uploadCoachAvatar(uid,files.get(0));
             }else{
                 return BaseResult.ERROR("wrong image type");
             }

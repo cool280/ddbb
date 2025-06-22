@@ -136,7 +136,7 @@ public class ChallengeService {
      * @param request
      */
     public Pair<Boolean,String> refuseChallenge(ChallengeRequest request){
-        ChallengeEntity entity = challengeRepo.findByChallengeIdAndTo(request.getChallengeId(), request.getQid());
+        ChallengeEntity entity = challengeRepo.findByChallengeIdAndTo(request.getChallengeId(), request.getUid());
         ChallengeStatus changeTo = ChallengeStatus.TO_REFUSED;
         Pair<Boolean,String> check = canChangeStatus(entity,changeTo);
         if(!check.getLeft()){
@@ -159,7 +159,7 @@ public class ChallengeService {
      * @param request
      */
     public Pair<Boolean,String> acceptChallenge(ChallengeRequest request){
-        ChallengeEntity entity = challengeRepo.findByChallengeIdAndTo(request.getChallengeId(), request.getQid());
+        ChallengeEntity entity = challengeRepo.findByChallengeIdAndTo(request.getChallengeId(), request.getUid());
 
         ChallengeStatus changeTo = ChallengeStatus.TO_ACCEPTED;
         Pair<Boolean,String> check = canChangeStatus(entity,changeTo);
@@ -188,9 +188,9 @@ public class ChallengeService {
     public Pair<Boolean,String> cancelChallenge(ChallengeRequest request){
         ChallengeEntity entity = challengeRepo.findOneByChallengeId(request.getChallengeId());
         ChallengeStatus changeTo;
-        Long qid = request.getQid();
+        Long uid = request.getUid();
         Long notifyQid;//要发短信通知的对方qid
-        if(entity.getFrom().equals(qid)){//发起方取消
+        if(entity.getFrom().equals(uid)){//发起方取消
             changeTo = ChallengeStatus.FROM_CANCELED;
             notifyQid = entity.getTo();
         }else{//接受方取消
@@ -222,11 +222,11 @@ public class ChallengeService {
     public Pair<Boolean,String> signIn(ChallengeRequest request){
         ChallengeEntity entity = challengeRepo.findOneByChallengeId(request.getChallengeId());
         ChallengeStatus changeTo;
-        Long qid = request.getQid();
+        Long uid = request.getUid();
         Long notifyQid;//要发短信通知的对方qid
         boolean isFromSign;
 
-        if(entity.getFrom().equals(qid)){//发起方签到
+        if(entity.getFrom().equals(uid)){//发起方签到
             if(BooleanUtils.isTrue(entity.getFromSignIn())){
                 return Pair.of(false,"您已经签到，无需再签");
             }

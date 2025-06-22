@@ -12,17 +12,17 @@ public class CoachRegisterRequest extends BaseRequest implements Serializable {
 
 
     public static void main(String[] args) {
-        Long qid = 65143423516446720L;
+        Long uid = 65143423516446720L;
         for(int i=0;i<10;i++){
-            System.out.println(qid+" ====> "+MD5Util.encode(qid.toString()));
-            qid = qid.longValue()+1;
+            System.out.println(uid+" ====> "+MD5Util.encode(uid.toString()));
+            uid = uid.longValue()+1;
         }
 
         System.out.println("==========================================================");
-        qid = 0L;
+        uid = 0L;
         for(int i=0;i<10;i++){
-            System.out.println(qid+" ====> "+MD5Util.encode(qid.toString()));
-            qid = qid.longValue()+1;
+            System.out.println(uid+" ====> "+MD5Util.encode(uid.toString()));
+            uid = uid.longValue()+1;
         }
     }
 }

@@ -11,8 +11,8 @@ public class LoginResponse extends BaseResponse implements Serializable {
 
     @ApiModelProperty(value = "是否为新注册用户")
     private boolean newUser;
-    @ApiModelProperty(value = "qid")
-    private Long qid;
+    @ApiModelProperty(value = "uid")
+    private Long uid;
     @ApiModelProperty(hidden = true)
     private int resultCode;
     @ApiModelProperty(hidden = true)

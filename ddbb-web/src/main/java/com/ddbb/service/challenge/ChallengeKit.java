@@ -56,14 +56,14 @@ public class ChallengeKit {
 
     /**
      * 检查一个人在给定的条件下是否空闲，不能有发起的挑战，不能有接受的挑战
-     * @param qid
+     * @param uid
      * @param dateStr
      * @param startTime
      * @param endTime
      * @return
      */
-    public boolean isFree(Long qid,String dateStr,Integer startTime,Integer endTime){
-        List<ChallengeEntity> list = challengeRepo.getAllChallengeByDate(qid,dateStr);
+    public boolean isFree(Long uid,String dateStr,Integer startTime,Integer endTime){
+        List<ChallengeEntity> list = challengeRepo.getAllChallengeByDate(uid,dateStr);
         if(CollectionUtils.isEmpty(list)){
             return true;
         }
@@ -79,20 +79,20 @@ public class ChallengeKit {
 
     /**
      * 获取一个人今天及以后的行程
-     * @param qid
+     * @param uid
      * @return
      */
-    public Map<String, ChallengeScheduleDO> getSchedule(Long qid){
+    public Map<String, ChallengeScheduleDO> getSchedule(Long uid){
         Map<String,ChallengeScheduleDO> ret = new LinkedHashMap<>();
-        if(qid == null){
+        if(uid == null){
             return ret;
         }
         //今天及以后发起的挑战
-        Map<String,List<Integer>> occupationLaunched = getOccupationTime(()->challengeRepo.getLaunchedTodayAndAfterChallenge(qid));
+        Map<String,List<Integer>> occupationLaunched = getOccupationTime(()->challengeRepo.getLaunchedTodayAndAfterChallenge(uid));
         //今天及以后收到的挑战
-        Map<String,List<Integer>> occupationReceived = getOccupationTime(()->challengeRepo.getReceivedTodayAndAfterChallenge(qid));
+        Map<String,List<Integer>> occupationReceived = getOccupationTime(()->challengeRepo.getReceivedTodayAndAfterChallenge(uid));
 
-        UserEntity user = userRepo.findByQid(qid);
+        UserEntity user = userRepo.findByQid(uid);
 
         //周几上班
         String workWeekDayStr = StringUtils.isBlank(user.getWorkWeekDay())?"1,2,3,4,5,6,7":user.getWorkWeekDay();
@@ -209,11 +209,11 @@ public class ChallengeKit {
 
     /**
      * 获取助教可出台球房
-     * @param qid
+     * @param uid
      * @return
      */
-    public List<WorkplaceVO> getSomeoneWorkplace(Long qid){
-        List<CoachWorkplaceEntity> list = coachWorkplaceReop.findByQid(qid);
+    public List<WorkplaceVO> getSomeoneWorkplace(Long uid){
+        List<CoachWorkplaceEntity> list = coachWorkplaceReop.findByQid(uid);
         if(CollectionUtils.isEmpty(list)){
             return Collections.emptyList();
         }

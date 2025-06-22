@@ -42,14 +42,14 @@ public class ProfileService {
      * @param workplaceRequest
      */
     public void addPresentHall(WorkplaceRequest workplaceRequest) throws Exception {
-        Long qid = workplaceRequest.getQid();
+        Long uid = workplaceRequest.getUid();
         Long hallId = workplaceRequest.getHallId();
-        UserEntity user = userRepo.findByQid(qid);
+        UserEntity user = userRepo.findByQid(uid);
         if(user.getUserType() == null || UserType.ASSISTANT_COACH.getCode() != user.getUserType()){
             throw new Exception("只有助教才能添加可出台球房");
         }
 
-        boolean b = coachWorkplaceReop.isCoachWorkplace(qid, hallId);
+        boolean b = coachWorkplaceReop.isCoachWorkplace(uid, hallId);
         if(b){
             throw new Exception("不可重复添加");
         }
@@ -61,7 +61,7 @@ public class ProfileService {
 
         CoachWorkplaceEntity entity = new CoachWorkplaceEntity();
         entity.setAid(SnowflakeIdUtil.getInstance().nextId());
-        entity.setQid(qid);
+        entity.setUid(uid);
         entity.setHallId(hallId);
         entity.setCoordinate(hall.getCoordinate());
 
@@ -73,7 +73,7 @@ public class ProfileService {
      * @param workplaceRequest
      */
     public void setMyWorkplace(WorkplaceRequest workplaceRequest) throws Exception {
-        Long qid = workplaceRequest.getQid();
+        Long uid = workplaceRequest.getUid();
         Long hallId = workplaceRequest.getHallId();
 
         //查球房经纬度
@@ -82,7 +82,7 @@ public class ProfileService {
             throw new Exception("hall id error");
         }
 
-        UserEntity user = userRepo.findByQid(qid);
+        UserEntity user = userRepo.findByQid(uid);
         if(user.getUserType() == null || UserType.ASSISTANT_COACH.getCode() != user.getUserType()){
             throw new Exception("只有助教才能设置工作球房");
         }
@@ -94,11 +94,11 @@ public class ProfileService {
         userRepo.updateByQidWithNull(user);
 
         //更新可出台球房
-        boolean b = coachWorkplaceReop.isCoachWorkplace(qid, hallId);
+        boolean b = coachWorkplaceReop.isCoachWorkplace(uid, hallId);
         if(!b){
             CoachWorkplaceEntity entity = new CoachWorkplaceEntity();
             entity.setAid(SnowflakeIdUtil.getInstance().nextId());
-            entity.setQid(qid);
+            entity.setUid(uid);
             entity.setHallId(hallId);
             entity.setCoordinate(hall.getCoordinate());
 
@@ -112,9 +112,9 @@ public class ProfileService {
      * @param workplaceRequest
      */
     public void setFreeCoach(WorkplaceRequest workplaceRequest) throws Exception {
-        Long qid = workplaceRequest.getQid();
+        Long uid = workplaceRequest.getUid();
 
-        UserEntity user = userRepo.findByQid(qid);
+        UserEntity user = userRepo.findByQid(uid);
         if(user.getUserType() == null || UserType.ASSISTANT_COACH.getCode() != user.getUserType()){
             throw new Exception("只有助教才能设置为自由职业");
         }
@@ -128,16 +128,16 @@ public class ProfileService {
 
     /**
      * 添加助教照片
-     * @param qid
+     * @param uid
      * @param files
      */
-    public void uploadCoachPhoto(Long qid,List<MultipartFile> files) throws Exception {
-        UserEntity user = userRepo.findByQid(qid);
+    public void uploadCoachPhoto(Long uid,List<MultipartFile> files) throws Exception {
+        UserEntity user = userRepo.findByQid(uid);
         if(user == null){
-            throw new Exception("qid is wrong");
+            throw new Exception("uid is wrong");
         }
         //1、获取路径
-        ImagePath imgPathObj = imagePathService.getUserImageFolderPath(qid);
+        ImagePath imgPathObj = imagePathService.getUserImageFolderPath(uid);
         String folderPath = imgPathObj.getPhotoHardDiskAbsolutePath();
         //判断文件夹是否存在，不存在则创建
         File imageDir = new File(folderPath);
@@ -162,22 +162,22 @@ public class ProfileService {
 
         //3、存库
         UserEntity userUpdate = new UserEntity();
-        userUpdate.setQid(qid);
+        userUpdate.setUid(uid);
         userUpdate.setPhoto(photoList);
         userRepo.updateByQidWithoutNull(userUpdate);
     }
     /**
      * 添加助教头像
-     * @param qid
+     * @param uid
      * @param multipartFile
      */
-    public void uploadCoachAvatar(Long qid, MultipartFile multipartFile) throws Exception {
-        UserEntity user = userRepo.findByQid(qid);
+    public void uploadCoachAvatar(Long uid, MultipartFile multipartFile) throws Exception {
+        UserEntity user = userRepo.findByQid(uid);
         if(user == null){
-            throw new Exception("qid is wrong");
+            throw new Exception("uid is wrong");
         }
         //1、获取路径
-        ImagePath imgPathObj = imagePathService.getUserImageFolderPath(qid);
+        ImagePath imgPathObj = imagePathService.getUserImageFolderPath(uid);
         String folderPath = imgPathObj.getAvatarHardDiskAbsolutePath();
         //判断文件夹是否存在，不存在则创建
         File imageDir = new File(folderPath);
@@ -200,19 +200,19 @@ public class ProfileService {
 
         //3、存库
         UserEntity userUpdate = new UserEntity();
-        userUpdate.setQid(qid);
+        userUpdate.setUid(uid);
         userUpdate.setAvatar(imgPathObj.getAvatarUrlRelativePath() + multipartFile.getOriginalFilename());
         userRepo.updateByQidWithoutNull(userUpdate);
     }
 
     public void changeProfile(ChangeProfileRequest request) throws Exception {
-        Long qid = request.getQid();
-        if(qid == null){
-            throw new Exception("qid is null");
+        Long uid = request.getUid();
+        if(uid == null){
+            throw new Exception("uid is null");
         }
-        UserEntity user = userRepo.findByQid(qid);
+        UserEntity user = userRepo.findByQid(uid);
         if(user == null){
-            throw new Exception("qid is wrong");
+            throw new Exception("uid is wrong");
         }
 
         UserEntity updateUser = new UserEntity();

@@ -11,8 +11,8 @@ import java.util.List;
 
 @Data
 public class ChangeProfileRequest implements Serializable {
-    @ApiModelProperty(value = "qid",required = true)
-    private Long qid;
+    @ApiModelProperty(value = "uid",required = true)
+    private Long uid;
     @ApiModelProperty(value = "手机号")
     private String phone;
     @ApiModelProperty(value = "昵称")

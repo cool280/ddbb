@@ -11,7 +11,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class UserEntity extends MongoEntity implements Serializable {
-    private Long qid;
+    private Long uid;
     private String phone;
     private String nickname;
     private Integer age;

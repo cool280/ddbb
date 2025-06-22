@@ -13,7 +13,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.List;
 
 /**
- db.user.createIndex({"qid":1},{"name":"uk_qid",unique: true,"background":true})
+ db.user.createIndex({"uid":1},{"name":"uk_qid",unique: true,"background":true})
  db.user.createIndex({"aid":1},{"name":"uk_aid",unique: true,"background":true})
  db.user.createIndex({"phone":1},{"name":"uk_phone",unique: true,"background":true})
  */
@@ -26,11 +26,11 @@ public class UserRepo extends MongoBaseRepository<UserEntity> {
 
     /**
      * 根据qid查人
-     * @param qid
+     * @param uid
      * @return
      */
-    public UserEntity findByQid(Long qid){
-        Criteria criteria = Criteria.where("qid").is(qid);
+    public UserEntity findByQid(Long uid){
+        Criteria criteria = Criteria.where("uid").is(uid);
         return findOne(criteria);
     }
     /**
@@ -73,10 +73,10 @@ public class UserRepo extends MongoBaseRepository<UserEntity> {
      * @param withNull    为null的值是否更新
      */
     private void updateByQid(UserEntity entity,boolean withNull){
-        Criteria criteria = Criteria.where("qid").is(entity.getQid());
+        Criteria criteria = Criteria.where("uid").is(entity.getUid());
         Query q = new Query(criteria);
 
-        Update u = new Update().set("qid",entity.getQid());
+        Update u = new Update().set("uid",entity.getUid());
         if(withNull || StringUtils.isNotBlank(entity.getPhone())){
             u.set("phone",entity.getPhone());
         }

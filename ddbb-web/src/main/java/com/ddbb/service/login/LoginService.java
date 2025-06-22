@@ -76,7 +76,7 @@ public class LoginService {
             user = createCommonUser(phone);
         }
 
-        return LoginResponse.builder().resultCode(0).msg("ok").newUser(isNewUser).qid(user.getQid())
+        return LoginResponse.builder().resultCode(0).msg("ok").newUser(isNewUser).uid(user.getUid())
                 .userType(user.getUserType())
                 .build();
     }
@@ -88,9 +88,9 @@ public class LoginService {
      */
     private UserEntity createCommonUser(String phone){
         UserEntity user = new UserEntity();
-        Long qid = SnowflakeIdUtil.getInstance().nextId();
-        user.setQid(qid);
-        user.setAid(qid);
+        Long uid = SnowflakeIdUtil.getInstance().nextId();
+        user.setUid(uid);
+        user.setAid(uid);
         user.setPhone(phone);
         user.setNickname(ProfileGenerator.getNickname());
         user.setAvatar(ProfileGenerator.getAvatar());

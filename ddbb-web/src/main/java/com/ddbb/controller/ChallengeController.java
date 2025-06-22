@@ -1,6 +1,7 @@
 package com.ddbb.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ddbb.controller.request.challenge.PrepareChallengeRequest;
 import com.ddbb.internal.annotate.DdbbController;
 import com.ddbb.service.challenge.ChallengeConfig;
 import com.ddbb.controller.request.*;
@@ -14,6 +15,7 @@ import com.ddbb.service.hall.WorkplaceVO;
 import com.ddbb.service.user.UserVO;
 import com.ddbb.internal.utils.DateUtilPlus;
 import com.ddbb.internal.utils.ObjectConverter;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -44,14 +46,15 @@ public class ChallengeController extends BaseController {
      * @param request
      * @return
      */
+    @ApiOperation(value = "发起挑战前的数据准备，获取助教行程日历等",position = -1)
     @ResponseBody
     @PostMapping("/prepareChallenge")
-    public BaseResult prepareChallenge(@RequestBody ChallengeRequest request){
+    public BaseResult prepareChallenge(@RequestBody PrepareChallengeRequest request){
         log.info("[prepareChallenge] >>> start: {}", ObjectConverter.o2s(request));
         JSONObject data = new JSONObject();
         try{
             //1. 参数校验
-            Long to = request.getTo();
+            Long to = request.getToUid();
             if(to == null){
                 return ERROR("to cannot be null");
             }
@@ -161,8 +164,8 @@ public class ChallengeController extends BaseController {
     public BaseResult getSomeoneSchedule(@RequestBody ChallengeRequest request){
         log.info("[getSomeoneSchedule] >>> start: {}", ObjectConverter.o2s(request));
         try{
-            Long qid = request.getQid();
-            Map<String, ChallengeScheduleDO> map = challengeKit.getSchedule(qid);
+            Long uid = request.getUid();
+            Map<String, ChallengeScheduleDO> map = challengeKit.getSchedule(uid);
             return OK(map);
         }catch (Exception e){
             log.error("[getSomeoneSchedule] with error:{}",e.getMessage(),e);
@@ -179,8 +182,8 @@ public class ChallengeController extends BaseController {
     public BaseResult getSomeoneWorkplace(@RequestBody ChallengeRequest request){
         log.info("[getSomeoneWorkplace] >>> start: {}", ObjectConverter.o2s(request));
         try{
-            Long qid = request.getQid();
-            List<WorkplaceVO> list = challengeKit.getSomeoneWorkplace(qid);
+            Long uid = request.getUid();
+            List<WorkplaceVO> list = challengeKit.getSomeoneWorkplace(uid);
             return OK(list);
         }catch (Exception e){
             log.error("[getSomeoneWorkplace] with error:{}",e.getMessage(),e);
@@ -199,9 +202,9 @@ public class ChallengeController extends BaseController {
     public BaseResult acceptChallenge(@RequestBody ChallengeRequest request){
         log.info("[acceptChallenge] >>> start: {}", ObjectConverter.o2s(request));
         try{
-            Long qid = request.getQid();
+            Long uid = request.getUid();
             String challengeId = request.getChallengeId();
-            if(qid == null || StringUtils.isBlank(challengeId)){
+            if(uid == null || StringUtils.isBlank(challengeId)){
                 return ERROR("param error");
             }
             Pair<Boolean,String> p = challengeService.acceptChallenge(request);
@@ -224,9 +227,9 @@ public class ChallengeController extends BaseController {
     public BaseResult refuseChallenge(@RequestBody ChallengeRequest request){
         log.info("[refuseChallenge] >>> start: {}", ObjectConverter.o2s(request));
         try{
-            Long qid = request.getQid();
+            Long uid = request.getUid();
             String challengeId = request.getChallengeId();
-            if(qid == null || StringUtils.isBlank(challengeId)){
+            if(uid == null || StringUtils.isBlank(challengeId)){
                 return ERROR("param error");
             }
             Pair<Boolean,String> p = challengeService.refuseChallenge(request);
@@ -250,9 +253,9 @@ public class ChallengeController extends BaseController {
     public BaseResult cancelChallenge(@RequestBody ChallengeRequest request){
         log.info("[cancelChallenge] >>> start: {}", ObjectConverter.o2s(request));
         try{
-            Long qid = request.getQid();
+            Long uid = request.getUid();
             String challengeId = request.getChallengeId();
-            if(qid == null || StringUtils.isBlank(challengeId)){
+            if(uid == null || StringUtils.isBlank(challengeId)){
                 return ERROR("param error");
             }
             Pair<Boolean,String> p = challengeService.cancelChallenge(request);
@@ -276,9 +279,9 @@ public class ChallengeController extends BaseController {
     public BaseResult signIn(@RequestBody ChallengeRequest request){
         log.info("[signIn] >>> start: {}", ObjectConverter.o2s(request));
         try{
-            Long qid = request.getQid();
+            Long uid = request.getUid();
             String challengeId = request.getChallengeId();
-            if(qid == null || StringUtils.isBlank(challengeId)){
+            if(uid == null || StringUtils.isBlank(challengeId)){
                 return ERROR("param error");
             }
             Pair<Boolean,String> p = challengeService.signIn(request);
@@ -303,9 +306,9 @@ public class ChallengeController extends BaseController {
     public BaseResult saveScore(@RequestBody ChallengeRequest request){
         log.info("[saveScore] >>> start: {}", ObjectConverter.o2s(request));
         try{
-            Long qid = request.getQid();
+            Long uid = request.getUid();
             String challengeId = request.getChallengeId();
-            if(qid == null || StringUtils.isBlank(challengeId) ||
+            if(uid == null || StringUtils.isBlank(challengeId) ||
                     request.getFromWinRound() == null || request.getToWinRound() == null){
                 return ERROR("param error");
             }
@@ -331,9 +334,9 @@ public class ChallengeController extends BaseController {
         //TODO 需高总的评价接口，这里只做状态的改变
         log.info("[commentCoach] >>> start: {}", ObjectConverter.o2s(request));
         try{
-            Long qid = request.getQid();
+            Long uid = request.getUid();
             String challengeId = request.getChallengeId();
-            if(qid == null || StringUtils.isBlank(challengeId)){
+            if(uid == null || StringUtils.isBlank(challengeId)){
                 return ERROR("param error");
             }
             Pair<Boolean,String> p = challengeService.commentCoach(request);
@@ -358,9 +361,9 @@ public class ChallengeController extends BaseController {
         //TODO 需高总的评价接口，这里只做状态的改变
         log.info("[commentHall] >>> start: {}", ObjectConverter.o2s(request));
         try{
-            Long qid = request.getQid();
+            Long uid = request.getUid();
             String challengeId = request.getChallengeId();
-            if(qid == null || StringUtils.isBlank(challengeId)){
+            if(uid == null || StringUtils.isBlank(challengeId)){
                 return ERROR("param error");
             }
             Pair<Boolean,String> p = challengeService.commentHall(request);

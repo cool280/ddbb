@@ -47,7 +47,7 @@ public class NearbyService {
                 CoachWorkplaceEntity coach = e.getContent();
                 double distance = e.getDistance().getValue();
 
-                UserEntity user = userRepo.findByQid(coach.getQid());
+                UserEntity user = userRepo.findByQid(coach.getUid());
                 if(user == null){
                     return;
                 }

@@ -11,7 +11,7 @@ public class CoachWorkplaceEntity extends MongoEntity{
     /**
      * 助教id
      */
-    private Long qid;
+    private Long uid;
     /**
      * 可出台球房id
      */

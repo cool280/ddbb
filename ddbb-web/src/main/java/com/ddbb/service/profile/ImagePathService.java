@@ -15,11 +15,11 @@ public class ImagePathService {
 
     /**
      * 获取用户相关的硬盘路径
-     * @param qid
+     * @param uid
      * @return
      */
-    public ImagePath getUserImageFolderPath(Long qid){
-        return getImageFolderAbsolutePath("u", MD5Util.encode(qid.toString()));
+    public ImagePath getUserImageFolderPath(Long uid){
+        return getImageFolderAbsolutePath("u", MD5Util.encode(uid.toString()));
 
     }
     /**

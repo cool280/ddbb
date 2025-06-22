@@ -161,7 +161,7 @@ public class HttpURLConnectionUtil {
         String uri = "/nearby/hall";
 
         JSONObject param = new JSONObject();
-        param.put("qid",123);
+        param.put("uid",123);
         param.put("longitude",121.544732);
         param.put("latitude",31.271186);
         param.put("minDistanceKm",0);

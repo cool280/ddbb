@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 public class NearbyAssistantCoachResponse extends BaseResponse implements Serializable, IWithPhotoVO {
     @ApiModelProperty(value = "助教id",required = true)
-    private Long qid;
+    private Long uid;
     @ApiModelProperty(value = "昵称",required = true)
     private String nickname;
     @ApiModelProperty(value = "年龄",required = true)

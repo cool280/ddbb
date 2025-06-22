@@ -24,7 +24,7 @@ public class ProfileTest {
     @Test
     public void testSendMsg() throws Exception {
         WorkplaceRequest request = new WorkplaceRequest();
-        request.setQid(134L);
+        request.setUid(134L);
         request.setHallId(1L);
 
         profileService.addPresentHall(request);

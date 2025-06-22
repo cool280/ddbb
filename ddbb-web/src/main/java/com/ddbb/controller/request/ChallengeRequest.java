@@ -8,7 +8,7 @@ import java.io.Serializable;
 public class ChallengeRequest extends BaseRequest implements Serializable {
     private Long from;//挑战发起人 - 球友id
     private Long to;//挑战接收
-    private Long qid;//请求人id
+    private Long uid;//请求人id
     // 人 - 助教id
     private Long hallId;//对战球房id
     private String challengeDateStr;//yyyy-MM-dd
