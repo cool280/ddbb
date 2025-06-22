@@ -126,7 +126,7 @@ public class ChallengeRepo extends MongoBaseRepository<ChallengeEntity> {
         return list.stream().filter(e->e.getFrom().equals(from)).findFirst().orElse(null);
     }
     /**
-     * 根据challengeId和from查询
+     * 根据challengeId和to查询
      * @param challengeId
      * @return
      */

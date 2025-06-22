@@ -41,5 +41,12 @@ public class ChallengeConfig {
      * 助教默认下班时间
      */
     private Integer defaultWorkTimeEnd;
-
+    /**
+     * 比赛开始前几小时内可签到
+     */
+    private Integer signInAheadHours;
+    /**
+     * 距离球房多少米内可签到
+     */
+    private Integer signInDistanceMi;
 }

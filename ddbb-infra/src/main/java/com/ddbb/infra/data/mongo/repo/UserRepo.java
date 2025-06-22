@@ -11,9 +11,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
- db.user.createIndex({"uid":1},{"name":"uk_qid",unique: true,"background":true})
+ db.user.createIndex({"uid":1},{"name":"uk_uid",unique: true,"background":true})
  db.user.createIndex({"aid":1},{"name":"uk_aid",unique: true,"background":true})
  db.user.createIndex({"phone":1},{"name":"uk_phone",unique: true,"background":true})
  */
@@ -25,16 +26,29 @@ public class UserRepo extends MongoBaseRepository<UserEntity> {
     }
 
     /**
-     * 根据qid查人
+     * 根据uid查人
      * @param uid
      * @return
      */
-    public UserEntity findByQid(Long uid){
+    public UserEntity findByUid(Long uid){
         Criteria criteria = Criteria.where("uid").is(uid);
         return findOne(criteria);
     }
+
     /**
-     * 根据qid查人
+     * 获取用户类型
+     * @param uid
+     * @return
+     */
+    public UserType getUserType(Long uid){
+        UserEntity entity = findByUid(uid);
+        if(entity == null){
+            return null;
+        }
+        return UserType.of(entity.getUserType());
+    }
+    /**
+     * 根据手机号查人
      * @param phone
      * @return
      */
@@ -53,26 +67,26 @@ public class UserRepo extends MongoBaseRepository<UserEntity> {
     }
 
     /**
-     * 根据qid更新，为null的值不更新
+     * 根据uid更新，为null的值不更新
      * @param entity
      */
-    public void updateByQidWithoutNull(UserEntity entity){
-        updateByQid(entity,false);
+    public void updateByUidWithoutNull(UserEntity entity){
+        updateByUid(entity,false);
     }
     /**
-     * 根据qid更新，为null的值也更新
+     * 根据uid更新，为null的值也更新
      * @param entity
      */
-    public void updateByQidWithNull(UserEntity entity){
-        updateByQid(entity,true);
+    public void updateByUidWithNull(UserEntity entity){
+        updateByUid(entity,true);
     }
 
     /**
-     * 根据qid更新
+     * 根据uid更新
      * @param entity
      * @param withNull    为null的值是否更新
      */
-    private void updateByQid(UserEntity entity,boolean withNull){
+    private void updateByUid(UserEntity entity, boolean withNull){
         Criteria criteria = Criteria.where("uid").is(entity.getUid());
         Query q = new Query(criteria);
 

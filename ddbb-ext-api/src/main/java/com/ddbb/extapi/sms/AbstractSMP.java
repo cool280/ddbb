@@ -10,7 +10,7 @@ import java.util.List;
 
 @Service
 public abstract class AbstractSMP {
-    @Value("${com.ddbb.allowSendSms:false}")
+    @Value("${ddbb.allowSendSms:false}")
     private boolean allowSendSms;
 
 
@@ -56,7 +56,7 @@ public abstract class AbstractSMP {
         return sendMsg(content,list);
     }
     /**
-     * TODO	发送短信
+     * 发送短信
      */
     public final JSONObject sendMsg(String content, List<String> phoneList) throws Exception {
         if(!allowSendSms){

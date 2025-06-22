@@ -1,7 +1,7 @@
 package com.ddbb.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.ddbb.controller.request.challenge.PrepareChallengeRequest;
+import com.ddbb.controller.request.challenge.*;
 import com.ddbb.internal.annotate.DdbbController;
 import com.ddbb.service.challenge.ChallengeConfig;
 import com.ddbb.controller.request.*;
@@ -15,6 +15,7 @@ import com.ddbb.service.hall.WorkplaceVO;
 import com.ddbb.service.user.UserVO;
 import com.ddbb.internal.utils.DateUtilPlus;
 import com.ddbb.internal.utils.ObjectConverter;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -23,8 +24,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +35,7 @@ import java.util.Map;
 @DdbbController
 @RequestMapping("/challenge")
 @Slf4j
+@Api(tags = "挑战相关")
 public class ChallengeController extends BaseController {
     @Autowired
     private ChallengeService challengeService;
@@ -46,21 +50,22 @@ public class ChallengeController extends BaseController {
      * @param request
      * @return
      */
-    @ApiOperation(value = "发起挑战前的数据准备，获取助教行程日历等",position = -1)
+    @ApiOperation(value = "发起挑战前的数据准备，获取助教行程日历等",position = 0)
     @ResponseBody
     @PostMapping("/prepareChallenge")
-    public BaseResult prepareChallenge(@RequestBody PrepareChallengeRequest request){
+    public BaseResult prepareChallenge(HttpServletRequest httpServletRequest, @RequestBody PrepareChallengeRequest request){
         log.info("[prepareChallenge] >>> start: {}", ObjectConverter.o2s(request));
         JSONObject data = new JSONObject();
         try{
             //1. 参数校验
             Long to = request.getToUid();
             if(to == null){
-                return ERROR("to cannot be null");
+                return ERROR("toUid cannot be null");
             }
-            UserEntity userInfo = userRepo.findByQid(to);
+            UserEntity userInfo = userRepo.findByUid(to);
             UserVO userVO = new UserVO();
             BeanUtils.copyProperties(userInfo,userVO);
+            userVO.setAvatar(getImageAbsoluteUrl(httpServletRequest,userVO.getAvatar()));
 
             Map<String, ChallengeScheduleDO> schedule = challengeKit.getSchedule(to);
 
@@ -85,11 +90,15 @@ public class ChallengeController extends BaseController {
      */
     @ResponseBody
     @PostMapping("/launchChallenge")
-    public BaseResult launchChallenge(@RequestBody ChallengeRequest request){
+    @ApiOperation(value = "球友向助教发起挑战",position = 1)
+    public BaseResult launchChallenge(@RequestBody LaunchChallengeRequest request){
         log.info("[launchChallenge] >>> start: {}", ObjectConverter.o2s(request));
         try{
             //0. 身份校验
-            UserEntity from = userRepo.findByQid(request.getFrom());
+            UserEntity from = userRepo.findByUid(request.getFrom());
+            if(from == null){
+                return ERROR("from uid is wrong");
+            }
             if(from.getUserType() == UserType.ASSISTANT_COACH.getCode()){
                 if(!challengeConfig.getAssistantCoachAllowLaunch()){
                     return ERROR("助教不可发起挑战");
@@ -143,8 +152,9 @@ public class ChallengeController extends BaseController {
                 return ERROR("该助教在您所选的时间段内已经有其他安排，请换个时间");
             }
             //5. 发起挑战
-            if(challengeService.launchChallenge(request)){
-                return OK;
+            Pair<Boolean,String> p = challengeService.launchChallenge(request);
+            if(p.getLeft()){
+                return OK(new HashMap<String,String>(){{put("challengeId",p.getRight());}},"发起挑战成功");
             }
             return ERROR("发起挑战失败，请稍后重试");
         }catch (Exception e){
@@ -155,7 +165,7 @@ public class ChallengeController extends BaseController {
     }
 
     /**
-     * 获取某人的行程表，从今天开始。qid放在from或to字段都可以，from优先
+     * 获取某人的行程表，从今天开始。uid放在from或to字段都可以，from优先
      * @param request
      * @return
      */
@@ -199,7 +209,8 @@ public class ChallengeController extends BaseController {
      */
     @ResponseBody
     @PostMapping("/acceptChallenge")
-    public BaseResult acceptChallenge(@RequestBody ChallengeRequest request){
+    @ApiOperation(value = "助教接受挑战",position = 6)
+    public BaseResult acceptChallenge(@RequestBody AcceptChallengeRequest request){
         log.info("[acceptChallenge] >>> start: {}", ObjectConverter.o2s(request));
         try{
             Long uid = request.getUid();
@@ -224,7 +235,8 @@ public class ChallengeController extends BaseController {
      */
     @ResponseBody
     @PostMapping("/refuseChallenge")
-    public BaseResult refuseChallenge(@RequestBody ChallengeRequest request){
+    @ApiOperation(value = "助教拒绝挑战",position = 5)
+    public BaseResult refuseChallenge(@RequestBody RefuseChallengeRequest request){
         log.info("[refuseChallenge] >>> start: {}", ObjectConverter.o2s(request));
         try{
             Long uid = request.getUid();
@@ -250,7 +262,8 @@ public class ChallengeController extends BaseController {
      */
     @ResponseBody
     @PostMapping("/cancelChallenge")
-    public BaseResult cancelChallenge(@RequestBody ChallengeRequest request){
+    @ApiOperation(value = "发起方（球友）或接受方（助教）取消挑战",position = 2)
+    public BaseResult cancelChallenge(@RequestBody CancelChallengeRequest request){
         log.info("[cancelChallenge] >>> start: {}", ObjectConverter.o2s(request));
         try{
             Long uid = request.getUid();
@@ -276,13 +289,18 @@ public class ChallengeController extends BaseController {
      */
     @ResponseBody
     @PostMapping("/signIn")
-    public BaseResult signIn(@RequestBody ChallengeRequest request){
+    @ApiOperation(value = "球友或助教签到",position = 5)
+    public BaseResult signIn(@RequestBody SignInChallengeRequest request){
         log.info("[signIn] >>> start: {}", ObjectConverter.o2s(request));
         try{
             Long uid = request.getUid();
             String challengeId = request.getChallengeId();
             if(uid == null || StringUtils.isBlank(challengeId)){
                 return ERROR("param error");
+            }
+            if(StringUtils.isBlank(request.getLongitude())
+                    || StringUtils.isBlank(request.getLatitude())){
+                return ERROR("经纬度不能为空");
             }
             Pair<Boolean,String> p = challengeService.signIn(request);
             if(p.getLeft()){
@@ -296,14 +314,10 @@ public class ChallengeController extends BaseController {
     }
 
 
-    /**
-     * 签到
-     * @param request
-     * @return
-     */
     @ResponseBody
     @PostMapping("/saveScore")
-    public BaseResult saveScore(@RequestBody ChallengeRequest request){
+    @ApiOperation(value = "球友或助教记录比分")
+    public BaseResult saveScore(@RequestBody SaveScoreRequest request){
         log.info("[saveScore] >>> start: {}", ObjectConverter.o2s(request));
         try{
             Long uid = request.getUid();
@@ -330,7 +344,8 @@ public class ChallengeController extends BaseController {
      */
     @ResponseBody
     @PostMapping("/commentCoach")
-    public BaseResult commentCoach(@RequestBody ChallengeRequest request){
+    @ApiOperation(value = "球友评价助教")
+    public BaseResult commentCoach(@RequestBody CommentCoachRequest request){
         //TODO 需高总的评价接口，这里只做状态的改变
         log.info("[commentCoach] >>> start: {}", ObjectConverter.o2s(request));
         try{
@@ -357,7 +372,8 @@ public class ChallengeController extends BaseController {
      */
     @ResponseBody
     @PostMapping("/commentHall")
-    public BaseResult commentHall(@RequestBody ChallengeRequest request){
+    @ApiOperation(value = "球友评价球房")
+    public BaseResult commentHall(@RequestBody CommentHallRequest request){
         //TODO 需高总的评价接口，这里只做状态的改变
         log.info("[commentHall] >>> start: {}", ObjectConverter.o2s(request));
         try{

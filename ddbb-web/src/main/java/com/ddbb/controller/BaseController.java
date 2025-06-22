@@ -51,6 +51,12 @@ public class BaseController {
         return new BaseResult(-1,err);
     }
 
+    /**
+     * url相对路径转成绝对url路径
+     * @param httpServletRequest
+     * @param imageRelativePath  /u/4ed5cdf92902390b40472a8c3e7492fe/a/avatar.jpg
+     * @return http://127.0.0.1:8080/ddbb_u_images/u/4ed5cdf92902390b40472a8c3e7492fe/a/avatar.jpg
+     */
     protected String getImageAbsoluteUrl(HttpServletRequest httpServletRequest,String imageRelativePath){
         String url = httpServletRequest.getRequestURL().toString();//http://127.0.0.1:8080/nearby/coach
         int pos = url.indexOf("//");

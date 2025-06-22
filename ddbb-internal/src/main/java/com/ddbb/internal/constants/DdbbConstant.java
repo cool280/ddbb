@@ -2,9 +2,9 @@ package com.ddbb.internal.constants;
 
 public class DdbbConstant {
     /**
-     * 系统账号qid
+     * 系统账号uid
      */
-    public static Long SYS_QID = 10000L;
+    public static Long SYS_UID = 10000L;
 
     /**
      * geo查询的默认值

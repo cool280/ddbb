@@ -21,17 +21,17 @@ public class CoachWorkplaceReop extends MongoBaseGeoRepository<CoachWorkplaceEnt
     }
 
     /**
-     * 根据qid查她所有可出台球房
+     * 根据uid查她所有可出台球房
      * @param uid
      * @return
      */
-    public List<CoachWorkplaceEntity> findByQid(Long uid){
+    public List<CoachWorkplaceEntity> findByUid(Long uid){
         Criteria criteria = Criteria.where("uid").is(uid);
         return findAll(criteria);
     }
 
     /**
-     * 查询qid是否可出台hallId
+     * 查询uid是否可出台hallId
      * @param uid
      * @param hallId
      * @return

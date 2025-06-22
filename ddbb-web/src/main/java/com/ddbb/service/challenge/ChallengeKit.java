@@ -69,6 +69,9 @@ public class ChallengeKit {
         }
         int[] requestRange = {startTime,endTime};
         for(ChallengeEntity c: list){
+            if(c.getAlive()!=null && c.getAlive().equals(false)){
+                continue;
+            }
             int[] existsRange = {c.getStartTime(),c.getEndTime()};
             if(DdbbUtil.isOverlap(requestRange,existsRange,false)){
                 return false;
@@ -92,7 +95,7 @@ public class ChallengeKit {
         //今天及以后收到的挑战
         Map<String,List<Integer>> occupationReceived = getOccupationTime(()->challengeRepo.getReceivedTodayAndAfterChallenge(uid));
 
-        UserEntity user = userRepo.findByQid(uid);
+        UserEntity user = userRepo.findByUid(uid);
 
         //周几上班
         String workWeekDayStr = StringUtils.isBlank(user.getWorkWeekDay())?"1,2,3,4,5,6,7":user.getWorkWeekDay();
@@ -181,7 +184,7 @@ public class ChallengeKit {
     }
 
     /**
-     * 获取qid未来的占用时间: 14表示14点-15点有约
+     * 获取uid未来的占用时间: 14表示14点-15点有约
      * @param func
      * @return {"2015-03-01":[14,15,16],"2015-03-02":[20,21],"2015-03-03":[]}
      */
@@ -213,7 +216,7 @@ public class ChallengeKit {
      * @return
      */
     public List<WorkplaceVO> getSomeoneWorkplace(Long uid){
-        List<CoachWorkplaceEntity> list = coachWorkplaceReop.findByQid(uid);
+        List<CoachWorkplaceEntity> list = coachWorkplaceReop.findByUid(uid);
         if(CollectionUtils.isEmpty(list)){
             return Collections.emptyList();
         }

@@ -1,6 +1,7 @@
 package com.ddbb.service.challenge;
 
 import com.ddbb.controller.request.ChallengeRequest;
+import com.ddbb.controller.request.challenge.*;
 import com.ddbb.internal.constants.DdbbConstant;
 import com.ddbb.internal.enums.ChallengeRole;
 import com.ddbb.internal.enums.ChallengeStatus;
@@ -11,6 +12,9 @@ import com.ddbb.infra.data.mongo.repo.ChallengeRepo;
 import com.ddbb.infra.data.mongo.repo.HallRepo;
 import com.ddbb.infra.data.mongo.repo.UserRepo;
 import com.ddbb.extapi.sms.Sioo;
+import com.ddbb.internal.enums.UserType;
+import com.ddbb.internal.utils.DateUtilPlus;
+import com.ddbb.internal.utils.DdbbUtil;
 import com.ddbb.internal.utils.SnowflakeIdUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
@@ -20,7 +24,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Service
 @Slf4j
@@ -41,16 +47,16 @@ public class ChallengeService {
      * 发起挑战
      * @param request
      */
-    public boolean launchChallenge(ChallengeRequest request)  {
+    public Pair<Boolean,String> launchChallenge(LaunchChallengeRequest request)  {
         try {
-            createChallengeRecord(request);
+            String challengeId = createChallengeRecord(request);
             sendLaunchChallengeSms(request);
-            return true;
+            return Pair.of(true,challengeId);
         } catch (Exception e) {
             e.printStackTrace();
             log.error("[launchChallenge] >>> from:{}, to:{}, with error: {}",request.getFrom(),request.getTo(),e.getMessage(),e);
+            return Pair.of(false,e.getMessage());
         }
-        return false;
     }
 
     /**
@@ -58,7 +64,7 @@ public class ChallengeService {
      * @param request
      * @throws ParseException
      */
-    private void createChallengeRecord(ChallengeRequest request)throws ParseException{
+    private String createChallengeRecord(LaunchChallengeRequest request)throws ParseException{
         long now = System.currentTimeMillis();
         String challengeId = "ch_"+SnowflakeIdUtil.getInstance().nextId();
 
@@ -89,9 +95,9 @@ public class ChallengeService {
 
         ChallengeEntity sys = new ChallengeEntity();
         BeanUtils.copyProperties(from,sys);
-        to.setOwner(DdbbConstant.SYS_QID);
-        to.setAid(SnowflakeIdUtil.getInstance().nextId());
-        to.setChallengeRole(ChallengeRole.SYSTEM.getCode());
+        sys.setOwner(DdbbConstant.SYS_UID);
+        sys.setAid(SnowflakeIdUtil.getInstance().nextId());
+        sys.setChallengeRole(ChallengeRole.SYSTEM.getCode());
 
 
 
@@ -99,19 +105,21 @@ public class ChallengeService {
         challengeRepo.insert(to);
         challengeRepo.insert(sys);
         log.info("[createChallengeRecord] >>> from:{},to:{}, done",from,to);
+
+        return challengeId;
     }
 
     /**
      * 给被挑战者发短信
      * @param request
      */
-    private void sendLaunchChallengeSms(ChallengeRequest request) throws Exception {
+    private void sendLaunchChallengeSms(LaunchChallengeRequest request) throws Exception {
         Long to = request.getTo();
-        UserEntity userTo = userRepo.findByQid(to);
+        UserEntity userTo = userRepo.findByUid(to);
         String phone = userTo.getPhone();
 
 
-        UserEntity userFrom = userRepo.findByQid(request.getFrom());
+        UserEntity userFrom = userRepo.findByUid(request.getFrom());
 
         HallEntity hall = hallRepo.findByHallId(request.getHallId());
 
@@ -135,10 +143,14 @@ public class ChallengeService {
      * 拒绝挑战
      * @param request
      */
-    public Pair<Boolean,String> refuseChallenge(ChallengeRequest request){
-        ChallengeEntity entity = challengeRepo.findByChallengeIdAndTo(request.getChallengeId(), request.getUid());
+    public Pair<Boolean,String> refuseChallenge(RefuseChallengeRequest request){
+        Long uid = request.getUid();
+        if(!Objects.equals(UserType.ASSISTANT_COACH,userRepo.getUserType(uid))){
+            return Pair.of(false,"只能是助教做拒绝挑战的动作");
+        }
+        ChallengeEntity challenge = challengeRepo.findByChallengeIdAndTo(request.getChallengeId(), request.getUid());
         ChallengeStatus changeTo = ChallengeStatus.TO_REFUSED;
-        Pair<Boolean,String> check = canChangeStatus(entity,changeTo);
+        Pair<Boolean,String> check = canChangeStatus(uid,challenge,changeTo);
         if(!check.getLeft()){
             return check;
         }
@@ -146,23 +158,32 @@ public class ChallengeService {
         challengeRepo.updateChallengeStatusAndFinish(request.getChallengeId(), changeTo);
 
         //发短信
-        UserEntity userFrom = userRepo.findByQid(entity.getFrom());
+        UserEntity userFrom = userRepo.findByUid(challenge.getFrom());
         try {
             sioo.sendMsg("亲，《DD打球》很抱歉通知您，助教拒绝了您的打球邀请",userFrom.getPhone());
         } catch (Exception e) {
             e.printStackTrace();
         }
+        log.info("拒绝挑战");
         return Pair.of(true,"ok");
     }
     /**
      * 接受挑战
      * @param request
      */
-    public Pair<Boolean,String> acceptChallenge(ChallengeRequest request){
-        ChallengeEntity entity = challengeRepo.findByChallengeIdAndTo(request.getChallengeId(), request.getUid());
+    public Pair<Boolean,String> acceptChallenge(AcceptChallengeRequest request){
+        UserEntity user = userRepo.findByUid(request.getUid());
+        if(user == null){
+            return Pair.of(false,"uid is wrong");
+        }
+        if(user.getUserType() != UserType.ASSISTANT_COACH.getCode()){
+            return Pair.of(false,"只能是助教做接受挑战的动作");
+        }
+
+        ChallengeEntity challenge = challengeRepo.findByChallengeIdAndTo(request.getChallengeId(), request.getUid());
 
         ChallengeStatus changeTo = ChallengeStatus.TO_ACCEPTED;
-        Pair<Boolean,String> check = canChangeStatus(entity,changeTo);
+        Pair<Boolean,String> check = canChangeStatus(request.getUid(),challenge,changeTo);
         if(!check.getLeft()){
             return check;
         }
@@ -170,7 +191,7 @@ public class ChallengeService {
         challengeRepo.updateChallengeStatus(request.getChallengeId(), changeTo);
 
         //发短信
-        UserEntity userFrom = userRepo.findByQid(entity.getFrom());
+        UserEntity userFrom = userRepo.findByUid(challenge.getFrom());
         try {
             sioo.sendMsg("亲，《DD打球》很高兴通知您，助教接受了您的打球邀请，请按时赴约哦",userFrom.getPhone());
         } catch (Exception e) {
@@ -185,20 +206,23 @@ public class ChallengeService {
      * 取消挑战
      * @param request
      */
-    public Pair<Boolean,String> cancelChallenge(ChallengeRequest request){
-        ChallengeEntity entity = challengeRepo.findOneByChallengeId(request.getChallengeId());
+    public Pair<Boolean,String> cancelChallenge(CancelChallengeRequest request){
+        ChallengeEntity challenge = challengeRepo.findOneByChallengeId(request.getChallengeId());
+        if(challenge == null){
+            return Pair.of(false,"challengeId is wrong");
+        }
         ChallengeStatus changeTo;
         Long uid = request.getUid();
-        Long notifyQid;//要发短信通知的对方qid
-        if(entity.getFrom().equals(uid)){//发起方取消
+        Long notifyUid;//要发短信通知的对方uid
+        if(challenge.getFrom().equals(uid)){//发起方取消
             changeTo = ChallengeStatus.FROM_CANCELED;
-            notifyQid = entity.getTo();
+            notifyUid = challenge.getTo();
         }else{//接受方取消
             changeTo = ChallengeStatus.TO_CANCELED;
-            notifyQid = entity.getFrom();
+            notifyUid = challenge.getFrom();
         }
 
-        Pair<Boolean,String> check = canChangeStatus(entity,changeTo);
+        Pair<Boolean,String> check = canChangeStatus(uid,challenge,changeTo);
         if(!check.getLeft()){
             return check;
         }
@@ -206,7 +230,7 @@ public class ChallengeService {
         challengeRepo.updateChallengeStatusAndFinish(request.getChallengeId(), changeTo);
 
         //发短信
-        UserEntity user2Notify = userRepo.findByQid(notifyQid);
+        UserEntity user2Notify = userRepo.findByUid(notifyUid);
         try {
             sioo.sendMsg("亲，《DD打球》很抱歉通知您，对方取消了打球邀请",user2Notify.getPhone());
         } catch (Exception e) {
@@ -219,54 +243,81 @@ public class ChallengeService {
      * 签到
      * @param request
      */
-    public Pair<Boolean,String> signIn(ChallengeRequest request){
-        ChallengeEntity entity = challengeRepo.findOneByChallengeId(request.getChallengeId());
+    public Pair<Boolean,String> signIn(SignInChallengeRequest request){
+        ChallengeEntity challenge = challengeRepo.findOneByChallengeId(request.getChallengeId());
+        if(challenge == null){
+            return Pair.of(false,"challengeId is wrong");
+        }else if(challenge.getAlive() == null || challenge.getAlive().equals(false)){
+            return Pair.of(false,"挑战已关闭");
+        }
         ChallengeStatus changeTo;
         Long uid = request.getUid();
-        Long notifyQid;//要发短信通知的对方qid
+        Long notifyUid;//要发短信通知的对方uid
         boolean isFromSign;
 
-        if(entity.getFrom().equals(uid)){//发起方签到
-            if(BooleanUtils.isTrue(entity.getFromSignIn())){
+        if(challenge.getFrom().equals(uid)){//发起方签到
+            if(BooleanUtils.isTrue(challenge.getFromSignIn())){
                 return Pair.of(false,"您已经签到，无需再签");
             }
-            notifyQid = entity.getTo();
+            notifyUid = challenge.getTo();
             isFromSign = true;
         }else{//接受方签到
-            if(BooleanUtils.isTrue(entity.getToSignIn())){
+            if(BooleanUtils.isTrue(challenge.getToSignIn())){
                 return Pair.of(false,"您已经签到，无需再签");
             }
-            notifyQid = entity.getFrom();
+            notifyUid = challenge.getFrom();
             isFromSign = false;
         }
 
         //临时赋值，做对比
-        if(entity.getFromSignIn() == null){
-            entity.setFromSignIn(false);
+        if(challenge.getFromSignIn() == null){
+            challenge.setFromSignIn(false);
         }
-        if(entity.getToSignIn() == null){
-            entity.setToSignIn(false);
+        if(challenge.getToSignIn() == null){
+            challenge.setToSignIn(false);
         }
 
-        if(BooleanUtils.isFalse(entity.getFromSignIn()) && BooleanUtils.isFalse(entity.getToSignIn())){
+        if(BooleanUtils.isFalse(challenge.getFromSignIn()) && BooleanUtils.isFalse(challenge.getToSignIn())){
             changeTo = ChallengeStatus.SINGLE_SIGN_IN;
-        }else if(BooleanUtils.isTrue(entity.getFromSignIn()) && BooleanUtils.isFalse(entity.getToSignIn())){
+        }else if(BooleanUtils.isTrue(challenge.getFromSignIn()) && BooleanUtils.isFalse(challenge.getToSignIn())){
             changeTo = ChallengeStatus.ALL_SIGN_IN;
-        }else if(BooleanUtils.isFalse(entity.getFromSignIn()) && BooleanUtils.isTrue(entity.getToSignIn())){
+        }else if(BooleanUtils.isFalse(challenge.getFromSignIn()) && BooleanUtils.isTrue(challenge.getToSignIn())){
             changeTo = ChallengeStatus.ALL_SIGN_IN;
         }else{
             return Pair.of(false,"双方都已经签到，无需再签");
         }
 
-        Pair<Boolean,String> check = canChangeStatus(entity,changeTo);
+        Pair<Boolean,String> check = canChangeStatus(uid,challenge,changeTo);
         if(!check.getLeft()){
             return check;
         }
 
+        //检查签到时间与经纬度
+        String challengeStartDateTime = challenge.getChallengeDateStr() + " "+challenge.getStartTime()+":00:00";
+        LocalDateTime cStart = DateUtilPlus.string2LocalDateTime(challengeStartDateTime);
+        LocalDateTime now = LocalDateTime.now();
+        long betweenHours = Duration.between(now,cStart).toHours();
+        if(betweenHours > challengeConfig.getSignInAheadHours()) {
+            return Pair.of(false,"比赛开始前"+challengeConfig.getSignInAheadHours()+"小时才能签到");
+        }
+        //距离球房500m才能签到
+        HallEntity hall = hallRepo.findByHallId(challenge.getHallId());
+        if(hall == null){
+            return Pair.of(false,"hallId is wrong");
+        }
+        Double[] hallPos = hall.getCoordinate();
+        double km = DdbbUtil.calculateDistanceKm(hallPos[0],hallPos[1]
+                ,Double.valueOf(request.getLongitude()),Double.valueOf(request.getLatitude()));
+        int miInt = (int)(km * 1000);
+        if(miInt > challengeConfig.getSignInDistanceMi()){
+            return Pair.of(false,"距离球房"+challengeConfig.getSignInDistanceMi()+"米内才能签到");
+        }
+
+
         challengeRepo.signIn(request.getChallengeId(), changeTo,isFromSign);
 
         //发短信
-        UserEntity user2Notify = userRepo.findByQid(notifyQid);
+        UserEntity user2Notify = userRepo.findByUid(notifyUid);
         try {
             sioo.sendMsg("亲，《DD打球》通知您，对方已签到",user2Notify.getPhone());
         } catch (Exception e) {
@@ -281,19 +332,19 @@ public class ChallengeService {
      * 登记比分
      * @param request
      */
-    public Pair<Boolean,String> saveScore(ChallengeRequest request){
-        ChallengeEntity entity = challengeRepo.findOneByChallengeId(request.getChallengeId());
+    public Pair<Boolean,String> saveScore(SaveScoreRequest request){
+        ChallengeEntity challenge = challengeRepo.findOneByChallengeId(request.getChallengeId());
 
         //临时赋值，做对比
-        if(entity.getScoreSaved() == null){
-            entity.setScoreSaved(false);
+        if(challenge.getScoreSaved() == null){
+            challenge.setScoreSaved(false);
         }
 
-        if(BooleanUtils.isTrue(entity.getScoreSaved())){
+        if(BooleanUtils.isTrue(challenge.getScoreSaved())){
             return Pair.of(false,"比分已登记完成！无需重复登记");
         }
 
-        Pair<Boolean,String> check = canChangeStatus(entity,ChallengeStatus.SCORE_SAVED);
+        Pair<Boolean,String> check = canChangeStatus(request.getUid(),challenge,ChallengeStatus.SCORE_SAVED);
         if(!check.getLeft()){
             return check;
         }
@@ -307,19 +358,27 @@ public class ChallengeService {
      * 评价助教
      * @param request
      */
-    public Pair<Boolean,String> commentCoach(ChallengeRequest request){
-        ChallengeEntity entity = challengeRepo.findOneByChallengeId(request.getChallengeId());
-        ChallengeStatus changeTo = ChallengeStatus.COACH_COMMENTED;
-        //临时赋值，做对比
-        if(entity.getCoachCommented() == null){
-            entity.setCoachCommented(false);
+    public Pair<Boolean,String> commentCoach(CommentCoachRequest request){
+        Long uid = request.getUid();
+        if(!Objects.equals(UserType.COMMON_USER,userRepo.getUserType(uid))){
+            return Pair.of(false,"球友才能评价助教");
         }
 
-        if(BooleanUtils.isTrue(entity.getCoachCommented())){
+        ChallengeEntity challenge = challengeRepo.findOneByChallengeId(request.getChallengeId());
+        if(challenge == null){
+            return Pair.of(false,"challengeId is wrong");
+        }
+        ChallengeStatus changeTo = ChallengeStatus.COACH_COMMENTED;
+        //临时赋值，做对比
+        if(challenge.getCoachCommented() == null){
+            challenge.setCoachCommented(false);
+        }
+
+        if(BooleanUtils.isTrue(challenge.getCoachCommented())){
             return Pair.of(false,"助教已评价完成！无需重复评价");
         }
 
-        Pair<Boolean,String> check = canChangeStatus(entity,changeTo);
+        Pair<Boolean,String> check = canChangeStatus(uid,challenge,changeTo);
         if(!check.getLeft()){
             return check;
         }
@@ -333,19 +392,27 @@ public class ChallengeService {
      * 评价球房
      * @param request
      */
-    public Pair<Boolean,String> commentHall(ChallengeRequest request){
-        ChallengeEntity entity = challengeRepo.findOneByChallengeId(request.getChallengeId());
-        ChallengeStatus changeTo = ChallengeStatus.HALL_COMMENTED;
-        //临时赋值，做对比
-        if(entity.getHallCommented() == null){
-            entity.setHallCommented(false);
+    public Pair<Boolean,String> commentHall(CommentHallRequest request){
+        Long uid = request.getUid();
+        if(!Objects.equals(UserType.COMMON_USER,userRepo.getUserType(uid))){
+            return Pair.of(false,"球友才能评价球房");
         }
 
-        if(BooleanUtils.isTrue(entity.getHallCommented())){
+        ChallengeEntity challenge = challengeRepo.findOneByChallengeId(request.getChallengeId());
+        if(challenge == null){
+            return Pair.of(false,"challengeId is wrong");
+        }
+        ChallengeStatus changeTo = ChallengeStatus.HALL_COMMENTED;
+        //临时赋值，做对比
+        if(challenge.getHallCommented() == null){
+            challenge.setHallCommented(false);
+        }
+
+        if(BooleanUtils.isTrue(challenge.getHallCommented())){
             return Pair.of(false,"球房已评价完成！无需重复评价");
         }
 
-        Pair<Boolean,String> check = canChangeStatus(entity,changeTo);
+        Pair<Boolean,String> check = canChangeStatus(uid,challenge,changeTo);
         if(!check.getLeft()){
             return check;
         }
@@ -357,24 +424,32 @@ public class ChallengeService {
 
     /**
      * 判断一个挑战书是否能被修改状态
-     * @param entity
+     * @param challenge
      * @param newStatus  要修改成什么状态
      * @return
      */
-    private Pair<Boolean,String> canChangeStatus(ChallengeEntity entity,ChallengeStatus newStatus){
-        if(entity == null){
-            return Pair.of(false,"挑战不存在");
+    private Pair<Boolean,String> canChangeStatus(Long uid,ChallengeEntity challenge,ChallengeStatus newStatus){
+        if(uid == null){
+            return Pair.of(false,"uid is wrong");
         }
-        if(entity.getAlive() == null || entity.getAlive() == false){
+        if(challenge == null){
+            return Pair.of(false,"挑战不存在，challengeId is wrong");
+        }
+
+        if(!uid.equals(challenge.getFrom()) && !uid.equals(challenge.getTo()) ){
+            return Pair.of(false,"您和本次比赛无关，无权操作");
+        }
+
+        if(challenge.getAlive() == null || challenge.getAlive() == false){
             return Pair.of(false,"挑战已关闭");
         }
-        ChallengeStatus old = ChallengeStatus.of(entity.getStatus());
+        ChallengeStatus old = ChallengeStatus.of(challenge.getStatus());
         if(! ChallengeStatusSequence.canChange(old,newStatus)){
             return Pair.of(false,"不能从"+old+"状态 -> 修改成指定状态："+newStatus);
         }
 
 
-        Pair<LocalDateTime,LocalDateTime> se = challengeKit.getChallengeStartAndEnd(entity);
+        Pair<LocalDateTime,LocalDateTime> se = challengeKit.getChallengeStartAndEnd(challenge);
 
         int ss = challengeConfig.getCloseWhenSecondsAfterEndTime();
         //比分登记、评价助教、评价球房可在比赛结束后24h内进行
@@ -395,5 +470,12 @@ public class ChallengeService {
     public static void main(String[] args) {
         System.out.println(BooleanUtils.isFalse(null));
         System.out.println(BooleanUtils.isTrue(null));
+
+
+
+        LocalDateTime cStart = DateUtilPlus.string2LocalDateTime("2025-06-22 22:00:00");
+        LocalDateTime now = LocalDateTime.now();
+        long between = Duration.between(now,cStart).toMillis() / 1000;
+        System.out.println(between);
     }
 }

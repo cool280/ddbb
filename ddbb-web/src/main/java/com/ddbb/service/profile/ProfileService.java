@@ -44,7 +44,7 @@ public class ProfileService {
     public void addPresentHall(WorkplaceRequest workplaceRequest) throws Exception {
         Long uid = workplaceRequest.getUid();
         Long hallId = workplaceRequest.getHallId();
-        UserEntity user = userRepo.findByQid(uid);
+        UserEntity user = userRepo.findByUid(uid);
         if(user.getUserType() == null || UserType.ASSISTANT_COACH.getCode() != user.getUserType()){
             throw new Exception("只有助教才能添加可出台球房");
         }
@@ -82,7 +82,7 @@ public class ProfileService {
             throw new Exception("hall id error");
         }
 
-        UserEntity user = userRepo.findByQid(uid);
+        UserEntity user = userRepo.findByUid(uid);
         if(user.getUserType() == null || UserType.ASSISTANT_COACH.getCode() != user.getUserType()){
             throw new Exception("只有助教才能设置工作球房");
         }
@@ -91,7 +91,7 @@ public class ProfileService {
         user.setWorkHallId(hallId);
         user.setCoordinate(hall.getCoordinate());
 
-        userRepo.updateByQidWithNull(user);
+        userRepo.updateByUidWithNull(user);
 
         //更新可出台球房
         boolean b = coachWorkplaceReop.isCoachWorkplace(uid, hallId);
@@ -114,7 +114,7 @@ public class ProfileService {
     public void setFreeCoach(WorkplaceRequest workplaceRequest) throws Exception {
         Long uid = workplaceRequest.getUid();
 
-        UserEntity user = userRepo.findByQid(uid);
+        UserEntity user = userRepo.findByUid(uid);
         if(user.getUserType() == null || UserType.ASSISTANT_COACH.getCode() != user.getUserType()){
             throw new Exception("只有助教才能设置为自由职业");
         }
@@ -123,7 +123,7 @@ public class ProfileService {
         user.setWorkHallId(null);
         user.setCoordinate(null);
 
-        userRepo.updateByQidWithNull(user);
+        userRepo.updateByUidWithNull(user);
     }
 
     /**
@@ -132,7 +132,7 @@ public class ProfileService {
      * @param files
      */
     public void uploadCoachPhoto(Long uid,List<MultipartFile> files) throws Exception {
-        UserEntity user = userRepo.findByQid(uid);
+        UserEntity user = userRepo.findByUid(uid);
         if(user == null){
             throw new Exception("uid is wrong");
         }
@@ -164,7 +164,7 @@ public class ProfileService {
         UserEntity userUpdate = new UserEntity();
         userUpdate.setUid(uid);
         userUpdate.setPhoto(photoList);
-        userRepo.updateByQidWithoutNull(userUpdate);
+        userRepo.updateByUidWithoutNull(userUpdate);
     }
     /**
      * 添加助教头像
@@ -172,7 +172,7 @@ public class ProfileService {
      * @param multipartFile
      */
     public void uploadCoachAvatar(Long uid, MultipartFile multipartFile) throws Exception {
-        UserEntity user = userRepo.findByQid(uid);
+        UserEntity user = userRepo.findByUid(uid);
         if(user == null){
             throw new Exception("uid is wrong");
         }
@@ -202,7 +202,7 @@ public class ProfileService {
         UserEntity userUpdate = new UserEntity();
         userUpdate.setUid(uid);
         userUpdate.setAvatar(imgPathObj.getAvatarUrlRelativePath() + multipartFile.getOriginalFilename());
-        userRepo.updateByQidWithoutNull(userUpdate);
+        userRepo.updateByUidWithoutNull(userUpdate);
     }
 
     public void changeProfile(ChangeProfileRequest request) throws Exception {
@@ -210,13 +210,13 @@ public class ProfileService {
         if(uid == null){
             throw new Exception("uid is null");
         }
-        UserEntity user = userRepo.findByQid(uid);
+        UserEntity user = userRepo.findByUid(uid);
         if(user == null){
             throw new Exception("uid is wrong");
         }
 
         UserEntity updateUser = new UserEntity();
         BeanUtils.copyProperties(request,updateUser);
-        userRepo.updateByQidWithoutNull(updateUser);
+        userRepo.updateByUidWithoutNull(updateUser);
     }
 }
