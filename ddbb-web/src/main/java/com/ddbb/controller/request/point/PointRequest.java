@@ -1,11 +1,11 @@
-package com.ddbb.controller.request;
+package com.ddbb.controller.request.point;
 
 import lombok.Data;
 
 import java.io.Serializable;
 
 @Data
-public class PointQueryRequest implements Serializable {
+public class PointRequest implements Serializable {
 
     private Long uid;
 

@@ -1,23 +1,22 @@
-package com.ddbb.controller.response;
+package com.ddbb.controller.response.point;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
 
 @Data
 public class PointDetailResponse implements Serializable {
 
     @ApiModelProperty(value = "积分类型")
-    private int pointType;
+    private int pointActionType;
 
     @ApiModelProperty(value = "积分名称")
-    private String pointName;
+    private String pointActionTypeName;
 
     @ApiModelProperty(value = "积分获取值")
     private int point;
 
     @ApiModelProperty(value = "创建时间")
-    private Date createTime;
+    private Long cts;
 }

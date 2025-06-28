@@ -1,5 +1,6 @@
-package com.ddbb.controller.response;
+package com.ddbb.controller.response.point;
 
+import com.ddbb.controller.response.BaseResponse;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
