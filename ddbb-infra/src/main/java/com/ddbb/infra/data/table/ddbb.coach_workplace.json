@@ -1,0 +1,58 @@
+[{
+  "_id": {
+    "$oid": "67fd37837429c9ef970e31d3"
+  },
+  "hallId": 2,
+  "coordinate": [
+    131.333,
+    31.999
+  ],
+  "uid": {
+    "$numberLong": "65143423516446720"
+  }
+},
+{
+  "_id": {
+    "$oid": "67fd378e7429c9ef970e31d4"
+  },
+  "hallId": 3,
+  "coordinate": [
+    131.333,
+    31.999
+  ],
+  "uid": {
+    "$numberLong": "65143423516446721"
+  }
+},
+{
+  "_id": {
+    "$oid": "67fd37957429c9ef970e31d5"
+  },
+  "hallId": 4,
+  "coordinate": [
+    131.333,
+    31.999
+  ],
+  "uid": {
+    "$numberLong": "65143423516446722"
+  }
+},
+{
+  "_id": {
+    "$oid": "6817bd07fc4bbf6eb14cd2a6"
+  },
+  "hallId": {
+    "$numberLong": "1"
+  },
+  "coordinate": [
+    121.544732,
+    31.271186
+  ],
+  "workHere": true,
+  "aid": {
+    "$numberLong": "5224796784934912"
+  },
+  "uid": {
+    "$numberLong": "65143423516446723"
+  }
+}]

@@ -1,0 +1,228 @@
+[{
+  "_id": {
+    "$oid": "67e827f21be48a643c138be6"
+  },
+  "hallId": {
+    "$numberLong": "1"
+  },
+  "nickname": "vv桌球杨浦长阳店",
+  "coachCount": 20,
+  "avatar": "h/c4ca4238a0b923820dcc509a6f75849b/a/a.png",
+  "photo": [
+    "h/c4ca4238a0b923820dcc509a6f75849b/p/1.jpg",
+    "h/c4ca4238a0b923820dcc509a6f75849b/p/2.jpg",
+    "h/c4ca4238a0b923820dcc509a6f75849b/p/3.jpg",
+    "h/c4ca4238a0b923820dcc509a6f75849b/p/4.jpg",
+    "h/c4ca4238a0b923820dcc509a6f75849b/p/5.jpg"
+  ],
+  "cityCode": "021",
+  "cityName": "上海",
+  "score": 5.1,
+  "address": "湖北",
+  "tel": "021-21345678",
+  "website": "http://xxx",
+  "coordinate": [
+    121.544732,
+    31.271186
+  ],
+  "area": 2000,
+  "workTime": "10:00 - 2:00",
+  "tableCount": 45,
+  "snookerCount": 5,
+  "vipRoomCount": 3,
+  "wayTo": "12号线爱国路，538路长阳路，自驾",
+  "parkingDiscount": "免费4小时",
+  "tablePrice": 98,
+  "snookerPrice": 100,
+  "vipRoomPrice": 90
+},
+{
+  "_id": {
+    "$oid": "67e829041be48a643c138bea"
+  },
+  "hallId": {
+    "$numberLong": "2"
+  },
+  "nickname": "vv桌球周浦万达店",
+  "coachCount": 20,
+  "avatar": "h/c81e728d9d4c2f636f067f89cc14862c/a/a.png",
+  "photo": [
+    "h/c81e728d9d4c2f636f067f89cc14862c/p/1.jpg",
+    "h/c81e728d9d4c2f636f067f89cc14862c/p/2.jpg",
+    "h/c81e728d9d4c2f636f067f89cc14862c/p/3.jpg",
+    "h/c81e728d9d4c2f636f067f89cc14862c/p/4.jpg",
+    "h/c81e728d9d4c2f636f067f89cc14862c/p/5.jpg"
+  ],
+  "cityCode": "021",
+  "cityName": "上海",
+  "score": 5.1,
+  "tablePrice": 98,
+  "address": "上海市浦东新区年家浜路38号",
+  "tel": "021-21345678",
+  "website": "http://xxx",
+  "coordinate": [
+    121.504776,
+    31.241613
+  ],
+  "area": 2000,
+  "workTime": "10:00 - 2:00",
+  "tableCount": 45,
+  "snookerCount": 5,
+  "vipRoomCount": 3,
+  "wayTo": "12号线爱国路，538路长阳路，自驾",
+  "parkingDiscount": "免费4小时",
+  "snookerPrice": 100,
+  "vipRoomPrice": 90
+},
+{
+  "_id": {
+    "$oid": "67e829041be48a643c138beb"
+  },
+  "hallId": {
+    "$numberLong": "3"
+  },
+  "nickname": "vv五角场店",
+  "coachCount": 20,
+  "avatar": "h/eccbc87e4b5ce2fe28308fd9f2a7baf3/a/a.png",
+  "photo": [
+    "h/eccbc87e4b5ce2fe28308fd9f2a7baf3/p/1.jpg",
+    "h/eccbc87e4b5ce2fe28308fd9f2a7baf3/p/2.jpg",
+    "h/eccbc87e4b5ce2fe28308fd9f2a7baf3/p/3.jpg",
+    "h/eccbc87e4b5ce2fe28308fd9f2a7baf3/p/4.jpg",
+    "h/eccbc87e4b5ce2fe28308fd9f2a7baf3/p/5.jpg"
+  ],
+  "cityCode": "021",
+  "cityName": "上海",
+  "score": 5.1,
+  "tablePrice": 98,
+  "address": "上海市浦东新区年家浜路38号",
+  "tel": "021-21345678",
+  "website": "http://xxx",
+  "coordinate": [
+    121.557955,
+    31.257173
+  ],
+  "area": 2000,
+  "workTime": "10:00 - 2:00",
+  "tableCount": 45,
+  "snookerCount": 5,
+  "vipRoomCount": 3,
+  "wayTo": "12号线爱国路，538路长阳路，自驾",
+  "parkingDiscount": "免费4小时",
+  "snookerPrice": 100,
+  "vipRoomPrice": 90
+},
+{
+  "_id": {
+    "$oid": "67e829041be48a643c138bec"
+  },
+  "hallId": {
+    "$numberLong": "4"
+  },
+  "nickname": "kk桌球五角场店",
+  "coachCount": 20,
+  "avatar": "h/a87ff679a2f3e71d9181a67b7542122c/a/a.png",
+  "photo": [
+    "h/a87ff679a2f3e71d9181a67b7542122c/p/1.jpg",
+    "h/a87ff679a2f3e71d9181a67b7542122c/p/2.jpg",
+    "h/a87ff679a2f3e71d9181a67b7542122c/p/3.jpg",
+    "h/a87ff679a2f3e71d9181a67b7542122c/p/4.jpg",
+    "h/a87ff679a2f3e71d9181a67b7542122c/p/5.jpg"
+  ],
+  "cityCode": "021",
+  "cityName": "上海",
+  "score": 5.1,
+  "tablePrice": 98,
+  "address": "上海市浦东新区年家浜路38号",
+  "tel": "021-21345678",
+  "website": "http://xxx",
+  "coordinate": [
+    121.343224,
+    31.202826
+  ],
+  "area": 2000,
+  "workTime": "10:00 - 2:00",
+  "tableCount": 45,
+  "snookerCount": 5,
+  "vipRoomCount": 3,
+  "wayTo": "12号线爱国路，538路长阳路，自驾",
+  "parkingDiscount": "免费4小时",
+  "snookerPrice": 100,
+  "vipRoomPrice": 90
+},
+{
+  "_id": {
+    "$oid": "67e829041be48a643c138bed"
+  },
+  "hallId": {
+    "$numberLong": "5"
+  },
+  "nickname": "kk桌球周浦零峰会店",
+  "coachCount": 20,
+  "avatar": "h/e4da3b7fbbce2345d7772b0674a318d5/a/a.png",
+  "photo": [
+    "h/e4da3b7fbbce2345d7772b0674a318d5/p/1.jpg",
+    "h/e4da3b7fbbce2345d7772b0674a318d5/p/2.jpg",
+    "h/e4da3b7fbbce2345d7772b0674a318d5/p/3.jpg",
+    "h/e4da3b7fbbce2345d7772b0674a318d5/p/4.jpg",
+    "h/e4da3b7fbbce2345d7772b0674a318d5/p/5.jpg"
+  ],
+  "cityCode": "021",
+  "cityName": "上海",
+  "score": 5.1,
+  "tablePrice": 98,
+  "address": "上海市浦东新区年家浜路38号",
+  "tel": "021-21345678",
+  "website": "http://xxx",
+  "coordinate": [
+    121.463094,
+    31.256926
+  ],
+  "area": 2000,
+  "workTime": "10:00 - 2:00",
+  "tableCount": 45,
+  "snookerCount": 5,
+  "vipRoomCount": 3,
+  "wayTo": "12号线爱国路，538路长阳路，自驾",
+  "parkingDiscount": "免费4小时",
+  "snookerPrice": 100,
+  "vipRoomPrice": 90
+},
+{
+  "_id": {
+    "$oid": "67e829041be48a643c138bee"
+  },
+  "hallId": {
+    "$numberLong": "6"
+  },
+  "nickname": "kk桌球七巧国店",
+  "coachCount": 20,
+  "avatar": "h/1679091c5a880faf6fb5e6087eb1b2dc/a/a.png",
+  "photo": [
+    "h/1679091c5a880faf6fb5e6087eb1b2dc/p/1.jpg",
+    "h/1679091c5a880faf6fb5e6087eb1b2dc/p/2.jpg",
+    "h/1679091c5a880faf6fb5e6087eb1b2dc/p/3.jpg",
+    "h/1679091c5a880faf6fb5e6087eb1b2dc/p/4.jpg",
+    "h/1679091c5a880faf6fb5e6087eb1b2dc/p/5.jpg"
+  ],
+  "cityCode": "021",
+  "cityName": "上海",
+  "score": 5.1,
+  "tablePrice": 98,
+  "address": "上海市浦东新区年家浜路38号",
+  "tel": "021-21345678",
+  "website": "http://xxx",
+  "coordinate": [
+    121.474018,
+    31.213698
+  ],
+  "area": 2000,
+  "workTime": "10:00 - 2:00",
+  "tableCount": 45,
+  "snookerCount": 5,
+  "vipRoomCount": 3,
+  "wayTo": "12号线爱国路，538路长阳路，自驾",
+  "parkingDiscount": "免费4小时",
+  "snookerPrice": 100,
+  "vipRoomPrice": 90
+}]

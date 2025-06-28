@@ -1,0 +1,876 @@
+[{
+  "_id": {
+    "$oid": "6857ba2cd39d3d50b71c8d78"
+  },
+  "owner": {
+    "$numberLong": "7097358435659776"
+  },
+  "challengeId": "ch_7154632269148160",
+  "from": {
+    "$numberLong": "7097358435659776"
+  },
+  "to": {
+    "$numberLong": "65143423516446721"
+  },
+  "hallId": {
+    "$numberLong": "2"
+  },
+  "challengeDateStr": "2025-06-22",
+  "challengeDateInt": 20250622,
+  "startTime": 17,
+  "endTime": 19,
+  "status": 4,
+  "challengeRole": 1,
+  "alive": false,
+  "fromSignIn": false,
+  "toSignIn": false,
+  "createTimeTs": {
+    "$numberLong": "1750579756093"
+  },
+  "updateTimeTs": {
+    "$numberLong": "1750579756093"
+  },
+  "aid": {
+    "$numberLong": "7154632269148161"
+  }
+},
+{
+  "_id": {
+    "$oid": "6857ba2cd39d3d50b71c8d79"
+  },
+  "owner": {
+    "$numberLong": "65143423516446721"
+  },
+  "challengeId": "ch_7154632269148160",
+  "from": {
+    "$numberLong": "7097358435659776"
+  },
+  "to": {
+    "$numberLong": "65143423516446721"
+  },
+  "hallId": {
+    "$numberLong": "2"
+  },
+  "challengeDateStr": "2025-06-22",
+  "challengeDateInt": 20250622,
+  "startTime": 17,
+  "endTime": 19,
+  "status": 4,
+  "challengeRole": 2,
+  "alive": false,
+  "fromSignIn": false,
+  "toSignIn": false,
+  "createTimeTs": {
+    "$numberLong": "1750579756093"
+  },
+  "updateTimeTs": {
+    "$numberLong": "1750579756093"
+  },
+  "aid": {
+    "$numberLong": "7154632277536768"
+  }
+},
+{
+  "_id": {
+    "$oid": "6857ba2cd39d3d50b71c8d7a"
+  },
+  "owner": {
+    "$numberLong": "10000"
+  },
+  "challengeId": "ch_7154632269148160",
+  "from": {
+    "$numberLong": "7097358435659776"
+  },
+  "to": {
+    "$numberLong": "65143423516446721"
+  },
+  "hallId": {
+    "$numberLong": "2"
+  },
+  "challengeDateStr": "2025-06-22",
+  "challengeDateInt": 20250622,
+  "startTime": 17,
+  "endTime": 19,
+  "status": 4,
+  "challengeRole": 0,
+  "alive": false,
+  "fromSignIn": false,
+  "toSignIn": false,
+  "createTimeTs": {
+    "$numberLong": "1750579756093"
+  },
+  "updateTimeTs": {
+    "$numberLong": "1750579756093"
+  },
+  "aid": {
+    "$numberLong": "7154632281731072"
+  }
+},
+{
+  "_id": {
+    "$oid": "6857c4b3c708162dc8686b04"
+  },
+  "owner": {
+    "$numberLong": "7097358435659776"
+  },
+  "challengeId": "ch_7165937130582016",
+  "from": {
+    "$numberLong": "7097358435659776"
+  },
+  "to": {
+    "$numberLong": "65143423516446721"
+  },
+  "hallId": {
+    "$numberLong": "2"
+  },
+  "challengeDateStr": "2025-06-22",
+  "challengeDateInt": 20250622,
+  "startTime": 17,
+  "endTime": 19,
+  "status": 2,
+  "challengeRole": 1,
+  "alive": false,
+  "fromSignIn": false,
+  "toSignIn": false,
+  "createTimeTs": {
+    "$numberLong": "1750582451381"
+  },
+  "updateTimeTs": {
+    "$numberLong": "1750582451381"
+  },
+  "aid": {
+    "$numberLong": "7165937130582017"
+  }
+},
+{
+  "_id": {
+    "$oid": "6857c4b3c708162dc8686b05"
+  },
+  "owner": {
+    "$numberLong": "65143423516446721"
+  },
+  "challengeId": "ch_7165937130582016",
+  "from": {
+    "$numberLong": "7097358435659776"
+  },
+  "to": {
+    "$numberLong": "65143423516446721"
+  },
+  "hallId": {
+    "$numberLong": "2"
+  },
+  "challengeDateStr": "2025-06-22",
+  "challengeDateInt": 20250622,
+  "startTime": 17,
+  "endTime": 19,
+  "status": 2,
+  "challengeRole": 2,
+  "alive": false,
+  "fromSignIn": false,
+  "toSignIn": false,
+  "createTimeTs": {
+    "$numberLong": "1750582451381"
+  },
+  "updateTimeTs": {
+    "$numberLong": "1750582451381"
+  },
+  "aid": {
+    "$numberLong": "7165937134776320"
+  }
+},
+{
+  "_id": {
+    "$oid": "6857c4b3c708162dc8686b06"
+  },
+  "owner": {
+    "$numberLong": "10000"
+  },
+  "challengeId": "ch_7165937130582016",
+  "from": {
+    "$numberLong": "7097358435659776"
+  },
+  "to": {
+    "$numberLong": "65143423516446721"
+  },
+  "hallId": {
+    "$numberLong": "2"
+  },
+  "challengeDateStr": "2025-06-22",
+  "challengeDateInt": 20250622,
+  "startTime": 17,
+  "endTime": 19,
+  "status": 2,
+  "challengeRole": 0,
+  "alive": false,
+  "fromSignIn": false,
+  "toSignIn": false,
+  "createTimeTs": {
+    "$numberLong": "1750582451381"
+  },
+  "updateTimeTs": {
+    "$numberLong": "1750582451381"
+  },
+  "aid": {
+    "$numberLong": "7165937138970624"
+  }
+},
+{
+  "_id": {
+    "$oid": "6857cc7724b20b13ba95eaad"
+  },
+  "owner": {
+    "$numberLong": "7097358435659776"
+  },
+  "challengeId": "ch_7174276124160000",
+  "from": {
+    "$numberLong": "7097358435659776"
+  },
+  "to": {
+    "$numberLong": "65143423516446721"
+  },
+  "hallId": {
+    "$numberLong": "2"
+  },
+  "challengeDateStr": "2025-06-22",
+  "challengeDateInt": 20250622,
+  "startTime": 18,
+  "endTime": 19,
+  "status": 4,
+  "challengeRole": 1,
+  "alive": false,
+  "fromSignIn": false,
+  "toSignIn": false,
+  "createTimeTs": {
+    "$numberLong": "1750584439553"
+  },
+  "updateTimeTs": {
+    "$numberLong": "1750584439553"
+  },
+  "aid": {
+    "$numberLong": "7174276124160001"
+  }
+},
+{
+  "_id": {
+    "$oid": "6857cc7724b20b13ba95eaae"
+  },
+  "owner": {
+    "$numberLong": "65143423516446721"
+  },
+  "challengeId": "ch_7174276124160000",
+  "from": {
+    "$numberLong": "7097358435659776"
+  },
+  "to": {
+    "$numberLong": "65143423516446721"
+  },
+  "hallId": {
+    "$numberLong": "2"
+  },
+  "challengeDateStr": "2025-06-22",
+  "challengeDateInt": 20250622,
+  "startTime": 18,
+  "endTime": 19,
+  "status": 4,
+  "challengeRole": 2,
+  "alive": false,
+  "fromSignIn": false,
+  "toSignIn": false,
+  "createTimeTs": {
+    "$numberLong": "1750584439553"
+  },
+  "updateTimeTs": {
+    "$numberLong": "1750584439553"
+  },
+  "aid": {
+    "$numberLong": "7174276132548608"
+  }
+},
+{
+  "_id": {
+    "$oid": "6857cc7724b20b13ba95eaaf"
+  },
+  "owner": {
+    "$numberLong": "10000"
+  },
+  "challengeId": "ch_7174276124160000",
+  "from": {
+    "$numberLong": "7097358435659776"
+  },
+  "to": {
+    "$numberLong": "65143423516446721"
+  },
+  "hallId": {
+    "$numberLong": "2"
+  },
+  "challengeDateStr": "2025-06-22",
+  "challengeDateInt": 20250622,
+  "startTime": 18,
+  "endTime": 19,
+  "status": 4,
+  "challengeRole": 0,
+  "alive": false,
+  "fromSignIn": false,
+  "toSignIn": false,
+  "createTimeTs": {
+    "$numberLong": "1750584439553"
+  },
+  "updateTimeTs": {
+    "$numberLong": "1750584439553"
+  },
+  "aid": {
+    "$numberLong": "7174276145131520"
+  }
+},
+{
+  "_id": {
+    "$oid": "6857d24779421166bddf05ad"
+  },
+  "owner": {
+    "$numberLong": "7097358435659776"
+  },
+  "challengeId": "ch_7180515243634688",
+  "from": {
+    "$numberLong": "7097358435659776"
+  },
+  "to": {
+    "$numberLong": "65143423516446721"
+  },
+  "hallId": {
+    "$numberLong": "2"
+  },
+  "challengeDateStr": "2025-06-22",
+  "challengeDateInt": 20250622,
+  "startTime": 18,
+  "endTime": 19,
+  "status": 5,
+  "challengeRole": 1,
+  "alive": false,
+  "fromSignIn": false,
+  "toSignIn": false,
+  "createTimeTs": {
+    "$numberLong": "1750585927074"
+  },
+  "updateTimeTs": {
+    "$numberLong": "1750585927074"
+  },
+  "aid": {
+    "$numberLong": "7180515243634689"
+  }
+},
+{
+  "_id": {
+    "$oid": "6857d24779421166bddf05ae"
+  },
+  "owner": {
+    "$numberLong": "65143423516446721"
+  },
+  "challengeId": "ch_7180515243634688",
+  "from": {
+    "$numberLong": "7097358435659776"
+  },
+  "to": {
+    "$numberLong": "65143423516446721"
+  },
+  "hallId": {
+    "$numberLong": "2"
+  },
+  "challengeDateStr": "2025-06-22",
+  "challengeDateInt": 20250622,
+  "startTime": 18,
+  "endTime": 19,
+  "status": 5,
+  "challengeRole": 2,
+  "alive": false,
+  "fromSignIn": false,
+  "toSignIn": false,
+  "createTimeTs": {
+    "$numberLong": "1750585927074"
+  },
+  "updateTimeTs": {
+    "$numberLong": "1750585927074"
+  },
+  "aid": {
+    "$numberLong": "7180515247828992"
+  }
+},
+{
+  "_id": {
+    "$oid": "6857d24779421166bddf05af"
+  },
+  "owner": {
+    "$numberLong": "10000"
+  },
+  "challengeId": "ch_7180515243634688",
+  "from": {
+    "$numberLong": "7097358435659776"
+  },
+  "to": {
+    "$numberLong": "65143423516446721"
+  },
+  "hallId": {
+    "$numberLong": "2"
+  },
+  "challengeDateStr": "2025-06-22",
+  "challengeDateInt": 20250622,
+  "startTime": 18,
+  "endTime": 19,
+  "status": 5,
+  "challengeRole": 0,
+  "alive": false,
+  "fromSignIn": false,
+  "toSignIn": false,
+  "createTimeTs": {
+    "$numberLong": "1750585927074"
+  },
+  "updateTimeTs": {
+    "$numberLong": "1750585927074"
+  },
+  "aid": {
+    "$numberLong": "7180515252023296"
+  }
+},
+{
+  "_id": {
+    "$oid": "6857d4fc01a3a9702120732d"
+  },
+  "owner": {
+    "$numberLong": "7097358435659776"
+  },
+  "challengeId": "ch_7183423779549184",
+  "from": {
+    "$numberLong": "7097358435659776"
+  },
+  "to": {
+    "$numberLong": "65143423516446721"
+  },
+  "hallId": {
+    "$numberLong": "2"
+  },
+  "challengeDateStr": "2025-06-22",
+  "challengeDateInt": 20250622,
+  "startTime": 19,
+  "endTime": 24,
+  "status": 2,
+  "challengeRole": 1,
+  "alive": false,
+  "fromSignIn": false,
+  "toSignIn": false,
+  "createTimeTs": {
+    "$numberLong": "1750586620523"
+  },
+  "updateTimeTs": {
+    "$numberLong": "1750586620523"
+  },
+  "aid": {
+    "$numberLong": "7183423779549185"
+  }
+},
+{
+  "_id": {
+    "$oid": "6857d4fc01a3a9702120732e"
+  },
+  "owner": {
+    "$numberLong": "65143423516446721"
+  },
+  "challengeId": "ch_7183423779549184",
+  "from": {
+    "$numberLong": "7097358435659776"
+  },
+  "to": {
+    "$numberLong": "65143423516446721"
+  },
+  "hallId": {
+    "$numberLong": "2"
+  },
+  "challengeDateStr": "2025-06-22",
+  "challengeDateInt": 20250622,
+  "startTime": 19,
+  "endTime": 24,
+  "status": 2,
+  "challengeRole": 2,
+  "alive": false,
+  "fromSignIn": false,
+  "toSignIn": false,
+  "createTimeTs": {
+    "$numberLong": "1750586620523"
+  },
+  "updateTimeTs": {
+    "$numberLong": "1750586620523"
+  },
+  "aid": {
+    "$numberLong": "7183423783743488"
+  }
+},
+{
+  "_id": {
+    "$oid": "6857d4fc01a3a9702120732f"
+  },
+  "owner": {
+    "$numberLong": "10000"
+  },
+  "challengeId": "ch_7183423779549184",
+  "from": {
+    "$numberLong": "7097358435659776"
+  },
+  "to": {
+    "$numberLong": "65143423516446721"
+  },
+  "hallId": {
+    "$numberLong": "2"
+  },
+  "challengeDateStr": "2025-06-22",
+  "challengeDateInt": 20250622,
+  "startTime": 19,
+  "endTime": 24,
+  "status": 2,
+  "challengeRole": 0,
+  "alive": false,
+  "fromSignIn": false,
+  "toSignIn": false,
+  "createTimeTs": {
+    "$numberLong": "1750586620523"
+  },
+  "updateTimeTs": {
+    "$numberLong": "1750586620523"
+  },
+  "aid": {
+    "$numberLong": "7183423787937792"
+  }
+},
+{
+  "_id": {
+    "$oid": "6857d6c77be3f47576e79173"
+  },
+  "owner": {
+    "$numberLong": "7097358435659776"
+  },
+  "challengeId": "ch_7185350181433344",
+  "from": {
+    "$numberLong": "7097358435659776"
+  },
+  "to": {
+    "$numberLong": "65143423516446721"
+  },
+  "hallId": {
+    "$numberLong": "2"
+  },
+  "challengeDateStr": "2025-06-22",
+  "challengeDateInt": 20250622,
+  "startTime": 19,
+  "endTime": 24,
+  "status": 2,
+  "challengeRole": 1,
+  "alive": false,
+  "fromSignIn": false,
+  "toSignIn": false,
+  "createTimeTs": {
+    "$numberLong": "1750587079814"
+  },
+  "updateTimeTs": {
+    "$numberLong": "1750587079814"
+  },
+  "aid": {
+    "$numberLong": "7185350181433345"
+  }
+},
+{
+  "_id": {
+    "$oid": "6857d6c77be3f47576e79174"
+  },
+  "owner": {
+    "$numberLong": "65143423516446721"
+  },
+  "challengeId": "ch_7185350181433344",
+  "from": {
+    "$numberLong": "7097358435659776"
+  },
+  "to": {
+    "$numberLong": "65143423516446721"
+  },
+  "hallId": {
+    "$numberLong": "2"
+  },
+  "challengeDateStr": "2025-06-22",
+  "challengeDateInt": 20250622,
+  "startTime": 19,
+  "endTime": 24,
+  "status": 2,
+  "challengeRole": 2,
+  "alive": false,
+  "fromSignIn": false,
+  "toSignIn": false,
+  "createTimeTs": {
+    "$numberLong": "1750587079814"
+  },
+  "updateTimeTs": {
+    "$numberLong": "1750587079814"
+  },
+  "aid": {
+    "$numberLong": "7185350185627648"
+  }
+},
+{
+  "_id": {
+    "$oid": "6857d6c77be3f47576e79175"
+  },
+  "owner": {
+    "$numberLong": "10000"
+  },
+  "challengeId": "ch_7185350181433344",
+  "from": {
+    "$numberLong": "7097358435659776"
+  },
+  "to": {
+    "$numberLong": "65143423516446721"
+  },
+  "hallId": {
+    "$numberLong": "2"
+  },
+  "challengeDateStr": "2025-06-22",
+  "challengeDateInt": 20250622,
+  "startTime": 19,
+  "endTime": 24,
+  "status": 2,
+  "challengeRole": 0,
+  "alive": false,
+  "fromSignIn": false,
+  "toSignIn": false,
+  "createTimeTs": {
+    "$numberLong": "1750587079814"
+  },
+  "updateTimeTs": {
+    "$numberLong": "1750587079814"
+  },
+  "aid": {
+    "$numberLong": "7185350189821952"
+  }
+},
+{
+  "_id": {
+    "$oid": "6857d763d88fe67d92da8320"
+  },
+  "owner": {
+    "$numberLong": "7097358435659776"
+  },
+  "challengeId": "ch_7186002324402176",
+  "from": {
+    "$numberLong": "7097358435659776"
+  },
+  "to": {
+    "$numberLong": "65143423516446721"
+  },
+  "hallId": {
+    "$numberLong": "2"
+  },
+  "challengeDateStr": "2025-06-22",
+  "challengeDateInt": 20250622,
+  "startTime": 19,
+  "endTime": 24,
+  "status": 5,
+  "challengeRole": 1,
+  "alive": false,
+  "fromSignIn": true,
+  "toSignIn": true,
+  "createTimeTs": {
+    "$numberLong": "1750587235296"
+  },
+  "updateTimeTs": {
+    "$numberLong": "1750587235296"
+  },
+  "aid": {
+    "$numberLong": "7186002324402177"
+  }
+},
+{
+  "_id": {
+    "$oid": "6857d763d88fe67d92da8321"
+  },
+  "owner": {
+    "$numberLong": "65143423516446721"
+  },
+  "challengeId": "ch_7186002324402176",
+  "from": {
+    "$numberLong": "7097358435659776"
+  },
+  "to": {
+    "$numberLong": "65143423516446721"
+  },
+  "hallId": {
+    "$numberLong": "2"
+  },
+  "challengeDateStr": "2025-06-22",
+  "challengeDateInt": 20250622,
+  "startTime": 19,
+  "endTime": 24,
+  "status": 5,
+  "challengeRole": 2,
+  "alive": false,
+  "fromSignIn": true,
+  "toSignIn": true,
+  "createTimeTs": {
+    "$numberLong": "1750587235296"
+  },
+  "updateTimeTs": {
+    "$numberLong": "1750587235296"
+  },
+  "aid": {
+    "$numberLong": "7186002332790784"
+  }
+},
+{
+  "_id": {
+    "$oid": "6857d763d88fe67d92da8322"
+  },
+  "owner": {
+    "$numberLong": "10000"
+  },
+  "challengeId": "ch_7186002324402176",
+  "from": {
+    "$numberLong": "7097358435659776"
+  },
+  "to": {
+    "$numberLong": "65143423516446721"
+  },
+  "hallId": {
+    "$numberLong": "2"
+  },
+  "challengeDateStr": "2025-06-22",
+  "challengeDateInt": 20250622,
+  "startTime": 19,
+  "endTime": 24,
+  "status": 5,
+  "challengeRole": 0,
+  "alive": false,
+  "fromSignIn": true,
+  "toSignIn": true,
+  "createTimeTs": {
+    "$numberLong": "1750587235296"
+  },
+  "updateTimeTs": {
+    "$numberLong": "1750587235296"
+  },
+  "aid": {
+    "$numberLong": "7186002336985088"
+  }
+},
+{
+  "_id": {
+    "$oid": "6857ead8b0cdba1ba8b2efcf"
+  },
+  "owner": {
+    "$numberLong": "7097358435659776"
+  },
+  "challengeId": "ch_7206896123949056",
+  "from": {
+    "$numberLong": "7097358435659776"
+  },
+  "to": {
+    "$numberLong": "65143423516446721"
+  },
+  "hallId": {
+    "$numberLong": "2"
+  },
+  "challengeDateStr": "2025-06-22",
+  "challengeDateInt": 20250622,
+  "startTime": 20,
+  "endTime": 24,
+  "status": 10,
+  "challengeRole": 1,
+  "alive": true,
+  "fromSignIn": true,
+  "toSignIn": true,
+  "createTimeTs": {
+    "$numberLong": "1750592216764"
+  },
+  "updateTimeTs": {
+    "$numberLong": "1750592216764"
+  },
+  "aid": {
+    "$numberLong": "7206896123949057"
+  },
+  "scoreSaved": true,
+  "scoreSnapshot": "10_3",
+  "coachCommented": true,
+  "hallCommented": true
+},
+{
+  "_id": {
+    "$oid": "6857ead8b0cdba1ba8b2efd0"
+  },
+  "owner": {
+    "$numberLong": "65143423516446721"
+  },
+  "challengeId": "ch_7206896123949056",
+  "from": {
+    "$numberLong": "7097358435659776"
+  },
+  "to": {
+    "$numberLong": "65143423516446721"
+  },
+  "hallId": {
+    "$numberLong": "2"
+  },
+  "challengeDateStr": "2025-06-22",
+  "challengeDateInt": 20250622,
+  "startTime": 20,
+  "endTime": 24,
+  "status": 10,
+  "challengeRole": 2,
+  "alive": true,
+  "fromSignIn": true,
+  "toSignIn": true,
+  "createTimeTs": {
+    "$numberLong": "1750592216764"
+  },
+  "updateTimeTs": {
+    "$numberLong": "1750592216764"
+  },
+  "aid": {
+    "$numberLong": "7206896136531968"
+  },
+  "scoreSaved": true,
+  "scoreSnapshot": "10_3",
+  "coachCommented": true,
+  "hallCommented": true
+},
+{
+  "_id": {
+    "$oid": "6857ead8b0cdba1ba8b2efd1"
+  },
+  "owner": {
+    "$numberLong": "10000"
+  },
+  "challengeId": "ch_7206896123949056",
+  "from": {
+    "$numberLong": "7097358435659776"
+  },
+  "to": {
+    "$numberLong": "65143423516446721"
+  },
+  "hallId": {
+    "$numberLong": "2"
+  },
+  "challengeDateStr": "2025-06-22",
+  "challengeDateInt": 20250622,
+  "startTime": 20,
+  "endTime": 24,
+  "status": 10,
+  "challengeRole": 0,
+  "alive": true,
+  "fromSignIn": true,
+  "toSignIn": true,
+  "createTimeTs": {
+    "$numberLong": "1750592216764"
+  },
+  "updateTimeTs": {
+    "$numberLong": "1750592216764"
+  },
+  "aid": {
+    "$numberLong": "7206896140726272"
+  },
+  "scoreSaved": true,
+  "scoreSnapshot": "10_3",
+  "coachCommented": true,
+  "hallCommented": true
+}]
