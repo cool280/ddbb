@@ -18,7 +18,7 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class PointOperationService {
+public class PointUpdateService {
 
     private static final int KEEP_SIGN_IN_DAYS = 10;
 

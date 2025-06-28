@@ -4,7 +4,7 @@ import com.ddbb.controller.request.point.PointRequest;
 import com.ddbb.controller.response.point.PointQueryResponse;
 import com.ddbb.controller.response.point.SignInStatusResponse;
 import com.ddbb.internal.annotate.DdbbController;
-import com.ddbb.service.point.PointOperationService;
+import com.ddbb.service.point.PointUpdateService;
 import com.ddbb.service.point.PointQueryService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,7 +23,7 @@ public class PointController extends BaseController {
     private PointQueryService pointQueryService;
 
     @Autowired
-    private PointOperationService pointOperationService;
+    private PointUpdateService pointUpdateService;
 
     @ApiOperation(value = "我的积分")
     @ApiResponses(value = {@ApiResponse(code = 0, message = "ok", response = PointQueryResponse.class)})
@@ -49,7 +49,7 @@ public class PointController extends BaseController {
         if (!queryRequest.validate()) {
             return ERROR("参数不合法");
         }
-        return pointOperationService.signIn(queryRequest.getUid());
+        return pointUpdateService.signIn(queryRequest.getUid());
     }
 
     @ApiOperation(value = "签到记录")
