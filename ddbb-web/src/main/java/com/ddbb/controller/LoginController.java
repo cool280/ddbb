@@ -70,7 +70,7 @@ public class LoginController extends BaseController{
             return ERROR("请输入验证码");
         }
         try {
-            LoginResponse resp = loginService.doLogin(phone,verifyCode);
+            LoginResponse resp = loginService.doLogin(phone,verifyCode,request.getWxJsCode());
             if(resp.getResultCode()!=0){
                 return ERROR(resp.getMsg());
             }

@@ -65,4 +65,12 @@ public class UserEntity extends MongoEntity implements Serializable {
      * 如果是驻场助教，工作的球房id
      */
     private Long workHallId;
+    /**
+     * 微信的openid
+     */
+    private String wxOpenId;
+    /**
+     * 微信的UnionId
+     */
+    private String wxUnionId;
 }

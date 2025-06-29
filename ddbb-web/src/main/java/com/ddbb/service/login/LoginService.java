@@ -2,6 +2,8 @@ package com.ddbb.service.login;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ddbb.controller.response.LoginResponse;
+import com.ddbb.extapi.wx.Jscode2sessionResp;
+import com.ddbb.extapi.wx.WxPayService;
 import com.ddbb.internal.enums.UserType;
 import com.ddbb.infra.data.mongo.entity.LoginVerifyCodeEntity;
 import com.ddbb.infra.data.mongo.entity.UserEntity;
@@ -30,6 +32,8 @@ public class LoginService {
     private LoginVerifyCodeRepo loginVerifyCodeRepo;
     @Autowired
     private UserRepo userRepo;
+    @Autowired
+    private WxPayService wxPayService;
 
     /**
      * 发验证码
@@ -63,7 +67,7 @@ public class LoginService {
      * @return
      * @throws Exception
      */
-    public LoginResponse doLogin(String phone,String verifyCode) throws Exception {
+    public LoginResponse doLogin(String phone,String verifyCode,String jsCode) throws Exception {
         LoginVerifyCodeEntity entity = loginVerifyCodeRepo.findByPhone(phone);
 
         if(entity==null || StringUtils.isBlank(entity.getVerifyCode())) {
@@ -78,6 +82,21 @@ public class LoginService {
         if(user == null){
             isNewUser = true;
             user = createCommonUser(phone);
+        }
+        final UserEntity user4Update = user;
+
+        //获取wx的openid
+        if(StringUtils.isBlank(user.getWxOpenId())){
+            new Thread(
+                    ()->{
+                        Jscode2sessionResp resp = wxPayService.jscode2session(jsCode);
+                        if(resp!=null){
+                            user4Update.setWxOpenId(resp.getOpenId());
+                            user4Update.setWxUnionId(resp.getUnionId());
+                            userRepo.updateByUidWithoutNull(user4Update);
+                        }
+                    }
+            ).start();
         }
 
         return LoginResponse.builder().resultCode(0).msg("ok").newUser(isNewUser).uid(user.getUid())

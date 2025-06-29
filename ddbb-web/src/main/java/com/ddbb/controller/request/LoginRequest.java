@@ -10,4 +10,6 @@ public class LoginRequest extends BaseRequest implements Serializable {
     private String phone;
     @ApiModelProperty(value = "验证码（发送验证码接口非必须）",required = true)
     private String verifyCode;
+    @ApiModelProperty(value = "微信小程序登录的js_code",required = true)
+    private String wxJsCode;
 }

@@ -109,8 +109,37 @@ public class OkHttpUtil {
         return doPost(url,jsonObject,null);
     }
 
+    public static String doPostWithHeader(String url, JSONObject jsonObject,Map<String,String> headersMap){
+        return doPost(url,jsonObject,headersMap);
+    }
+
 
     public static String doPost(String url, JSONObject jsonObject,Map<String,String> headersMap){
+        try{
+            Response response1 = doPostResponseReturned(url, jsonObject, headersMap);
+            //获取Http Status Code.其中200表示成功
+            if (response1.code() == 200) {
+                //这里需要注意，response.body().string()是获取返回的结果，此句话只能调用一次，再次调用获得不到结果。
+                //所以先将结果使用result变量接收
+                String result = response1.body().string();
+                log.info("[doPost] >>> result: "+result);
+                return result;
+            }else{
+                log.warn("[doPost] >>> resultCode is not 200, but: "+response1.code());
+                String result = response1.body().string();
+                log.warn("[doPost] >>> response.body(): "+result);
+                return "";
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+            log.error("[doPost] >>> with error: "+e.getMessage());
+            return "";
+        }
+
+
+
+    }
+    public static Response doPostResponseReturned(String url, JSONObject jsonObject,Map<String,String> headersMap){
         String json = jsonObject.toJSONString();
         RequestBody body = RequestBody.create(
                 MediaType.parse("application/json"), json);
@@ -129,22 +158,26 @@ public class OkHttpUtil {
                 call = okHttpClient.newCall(request);
             }
             response = call.execute();
-
+            return response;
             //获取Http Status Code.其中200表示成功
+            /*
             if (response.code() == 200) {
                 //这里需要注意，response.body().string()是获取返回的结果，此句话只能调用一次，再次调用获得不到结果。
                 //所以先将结果使用result变量接收
                 String result = response.body().string();
                 log.info("[doPost] >>> result: "+result);
-                return result;
+                return response;
             }else{
                 log.warn("[doPost] >>> resultCode is not 200, but: "+response.code());
-                return "";
+                String result = response.body().string();
+                log.warn("[doPost] >>> response.body(): "+result);
+                return null;
             }
+             */
         } catch (Exception e) {
             e.printStackTrace();
             log.error("[doPost] >>> with error: "+e.getMessage());
-            return "";
+            return null;
         } finally {
             if (response != null) {
                 response.body().close();

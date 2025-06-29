@@ -19,4 +19,6 @@ public class LoginResponse extends BaseResponse implements Serializable {
     private String msg;
     @ApiModelProperty(value = "用户类型，球友还是助教")
     private int userType;
+    @ApiModelProperty(value = "小程序登录返回的sessionKey")
+    private String sessionKey;
 }
