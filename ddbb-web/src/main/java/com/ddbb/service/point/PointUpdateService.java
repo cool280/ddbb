@@ -63,7 +63,7 @@ public class PointUpdateService {
         return BaseResult.ERROR("签到失败");
     }
 
-    private boolean updatePoints(Long uid, PointActionType pointType) {
+    public boolean updatePoints(Long uid, PointActionType pointType) {
         try {
             PointRecordEntity entity = new PointRecordEntity();
             entity.setUid(uid);

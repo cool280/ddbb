@@ -8,9 +8,9 @@ import java.io.Serializable;
 @Data
 public class HallEvalDimensionRequest implements Serializable {
 
-    private Long hallId;
+    private Long hallId; //球房ID
 
-    private Long evaluatorId;
+    private Long evalUid; //评论者UID
 
     private Integer satisfaction;    // 满意度
 
@@ -24,18 +24,28 @@ public class HallEvalDimensionRequest implements Serializable {
 
     private Integer costPerformance; // 性价比
 
-    private String comment;
+    private String comment; //评价内容
 
-    private String challengeId;
+    private String challengeId; //订单ID
 
     public boolean validate() {
-        if (hallId == null || evaluatorId == null) {
+        if (hallId == null || evalUid == null) {
             return false;
         }
-        if (hallId <= 0L || evaluatorId <= 0L) {
+        if (hallId <= 0L || evalUid <= 0L) {
             return false;
         }
         if (StringUtils.isEmpty(challengeId)) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean validateDimension() {
+        if (satisfaction <= 0 || environment <= 0 || facilities <= 0 || service <= 0 || assistantScore <= 0 || costPerformance <= 0) {
+            return false;
+        }
+        if (StringUtils.isEmpty(comment)) {
             return false;
         }
         return true;

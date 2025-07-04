@@ -9,6 +9,10 @@ public enum PointActionType {
 
     KEEP_SIGN_IN(2, 100, "签到"),
 
+    COACH_COMMENT(3, 20, "评论"),
+
+    HALL_COMMENT(4, 20, "评论"),
+
     ;
 
     PointActionType(int type, int points, String desc) {

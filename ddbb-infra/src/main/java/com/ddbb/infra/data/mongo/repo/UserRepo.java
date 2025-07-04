@@ -10,8 +10,9 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  db.user.createIndex({"uid":1},{"name":"uk_uid",unique: true,"background":true})
@@ -33,6 +34,12 @@ public class UserRepo extends MongoBaseRepository<UserEntity> {
     public UserEntity findByUid(Long uid){
         Criteria criteria = Criteria.where("uid").is(uid);
         return findOne(criteria);
+    }
+
+    public Map<Long, UserEntity> findByUids(Set<Long> uids) {
+        Criteria criteria = Criteria.where("uid").in(uids);
+        List<UserEntity> list = findAll(criteria);
+        return Optional.of(list).orElse(new ArrayList<>()).stream().collect(Collectors.toMap(UserEntity::getUid, Function.identity()));
     }
 
     /**

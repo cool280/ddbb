@@ -6,9 +6,9 @@ import org.apache.commons.lang3.StringUtils;
 @Data
 public class CoachEvalDimensionRequest {
 
-    private Long coachUid;
+    private Long coachUid; //助教UID
 
-    private Long evaluatorId;
+    private Long evalUid; //评论者UID
 
     private Integer satisfaction = 0;    // 满意度
 
@@ -18,18 +18,28 @@ public class CoachEvalDimensionRequest {
 
     private Integer attitude = 0;        // 态度(0-10分)
 
-    private String comment;
+    private String comment; //内容
 
-    private String challengeId;
+    private String challengeId; //订单ID
 
     public boolean validate() {
-        if (coachUid == null || evaluatorId == null) {
+        if (coachUid == null || evalUid == null) {
             return false;
         }
-        if (coachUid <= 0L || evaluatorId <= 0L) {
+        if (coachUid <= 0L || evalUid <= 0L) {
             return false;
         }
         if (StringUtils.isEmpty(challengeId)) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean validateDimension() {
+        if (satisfaction <= 0 || appearance <= 0 || skill <= 0 || attitude <= 0) {
+            return false;
+        }
+        if (StringUtils.isEmpty(comment)) {
             return false;
         }
         return true;
