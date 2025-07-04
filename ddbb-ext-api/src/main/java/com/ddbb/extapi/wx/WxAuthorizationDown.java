@@ -268,7 +268,7 @@ public class WxAuthorizationDown implements IVerifyResponseService {
       */
     @Data
     @Builder
-    class WxVerifyObject{
+    private static class WxVerifyObject{
         /**
          * 平台证书的序列号
          */
