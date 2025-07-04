@@ -180,6 +180,7 @@ public class WxAuthorizationDown implements IVerifyResponseService, Initializing
 
     /**
      * 验签微信主动回调
+     * https://pay.weixin.qq.com/doc/v3/merchant/4012791902
      * 注意：使用了 @RequestBody 注解后，无法再通过IOUtils.toString()获取body，和response.body().string()一样
      * 因此，无论是否使用了@RequestBody 注解，都要求调用方把body放在request.setAttribute("requestBodyXxx","...")中
      * @param request
