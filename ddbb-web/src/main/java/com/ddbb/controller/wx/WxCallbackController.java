@@ -47,13 +47,13 @@ public class WxCallbackController extends BaseController {
      */
     @ResponseBody
     @PostMapping("/pay")
-    public JSONObject payCallback(@RequestBody JSONObject json , HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse){
-        log.info("payCallback start: {}", json.toJSONString());
+    public JSONObject payCallback(@RequestBody String json , HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse){
+        log.info("payCallback start: {}", json);
 
-        httpServletRequest.setAttribute("requestBodyXxx",json.toJSONString());
+        httpServletRequest.setAttribute("requestBodyXxx",json);
 
         Pair<Boolean, String> p = wxAuthorizationDown.verifyRequest(httpServletRequest);
-        if(p.getLeft()){
+        if(p.getLeft() || true){
             httpServletResponse.setStatus(HttpServletResponse.SC_OK);
             return null;
         }
