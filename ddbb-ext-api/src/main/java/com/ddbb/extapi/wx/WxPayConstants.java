@@ -23,9 +23,15 @@ public class WxPayConstants {
      */
     public static String SERIAL_NO = "50F80CC236A91E19E1A35203BF0E61005CB42648";
     /**
+     * API安全/平台证书管理
+     * 平台api证书序列号
+     */
+    public static String WX_PLATFORM_SERIAL_NO = "4E221BD0951FCC4D6F495E7037165D5A4D7F3381";
+    /**
      * 商户号
      */
     public static String MCH_ID = "1715041370";
+    public static String TEST_OPEN_ID = "oC7Ri7B9YhFthihK4m3ytqt8LJAM";
 
 
     public static class WholeUrl{

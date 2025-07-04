@@ -3,6 +3,7 @@ package com.ddbb.internal.utils;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -115,31 +116,9 @@ public class OkHttpUtil {
 
 
     public static String doPost(String url, JSONObject jsonObject,Map<String,String> headersMap){
-        try{
-            Response response1 = doPostResponseReturned(url, jsonObject, headersMap);
-            //获取Http Status Code.其中200表示成功
-            if (response1.code() == 200) {
-                //这里需要注意，response.body().string()是获取返回的结果，此句话只能调用一次，再次调用获得不到结果。
-                //所以先将结果使用result变量接收
-                String result = response1.body().string();
-                log.info("[doPost] >>> result: "+result);
-                return result;
-            }else{
-                log.warn("[doPost] >>> resultCode is not 200, but: "+response1.code());
-                String result = response1.body().string();
-                log.warn("[doPost] >>> response.body(): "+result);
-                return "";
-            }
-        }catch (Exception e) {
-            e.printStackTrace();
-            log.error("[doPost] >>> with error: "+e.getMessage());
-            return "";
-        }
-
-
-
+        return  doPost(url, jsonObject, headersMap,null);
     }
-    public static Response doPostResponseReturned(String url, JSONObject jsonObject,Map<String,String> headersMap){
+    public static String doPost(String url, JSONObject jsonObject,Map<String,String> headersMap,IVerifyResponseService verifyResponseService){
         String json = jsonObject.toJSONString();
         RequestBody body = RequestBody.create(
                 MediaType.parse("application/json"), json);
@@ -158,32 +137,43 @@ public class OkHttpUtil {
                 call = okHttpClient.newCall(request);
             }
             response = call.execute();
-            return response;
+
+            if(verifyResponseService != null){
+                return verifyResponse(verifyResponseService,response);
+            }
+
             //获取Http Status Code.其中200表示成功
-            /*
             if (response.code() == 200) {
                 //这里需要注意，response.body().string()是获取返回的结果，此句话只能调用一次，再次调用获得不到结果。
                 //所以先将结果使用result变量接收
                 String result = response.body().string();
                 log.info("[doPost] >>> result: "+result);
-                return response;
+                return result;
             }else{
                 log.warn("[doPost] >>> resultCode is not 200, but: "+response.code());
                 String result = response.body().string();
                 log.warn("[doPost] >>> response.body(): "+result);
-                return null;
+                return "";
             }
-             */
         } catch (Exception e) {
             e.printStackTrace();
             log.error("[doPost] >>> with error: "+e.getMessage());
-            return null;
+            return "";
         } finally {
             if (response != null) {
                 response.body().close();
             }
         }
 
+    }
+
+    private static String verifyResponse(IVerifyResponseService verifyResponseService,Response response){
+        Pair<Boolean, String> p = verifyResponseService.verifyResponse(response);
+        if(!p.getLeft()){
+            log.error("[doPost] >>> verifyResponseService false");
+        }
+
+        return p.getRight();
     }
 
     private static Headers buildHeader(Map<String,String> map){

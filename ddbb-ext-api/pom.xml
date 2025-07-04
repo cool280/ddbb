@@ -54,5 +54,9 @@
             <artifactId>wechatpay-java</artifactId>
             <version>0.2.17</version>
         </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
     </dependencies>
 </project>

@@ -3,6 +3,7 @@ package com.ddbb.extapi.wx;
 import com.alibaba.fastjson.JSONObject;
 import com.ddbb.internal.utils.SnowflakeIdUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.InitializingBean;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -21,9 +22,17 @@ import java.util.Base64;
  * https://pay.weixin.qq.com/doc/v3/merchant/4012365336
  */
 @Slf4j
-public class WxAuthorizationUp {
+public class WxAuthorizationUp{
     private static final String ENCODING = "UTF-8";
     private static final String SIGNATURE_ALGORITHM = "SHA256withRSA";
+    private static PrivateKey PRIVATE_KEY = null;
+    static {
+        try {
+            PRIVATE_KEY = generatePrivateKey();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public static String getAuthorization(String url, JSONObject bodyParam){
         Long ts = System.currentTimeMillis() / 1000;
@@ -38,7 +47,7 @@ public class WxAuthorizationUp {
 
         byte[] b = new byte[0];
         try {
-            b = sign256(sb.toString(),generatePrivateKey());
+            b = sign256(sb.toString(),PRIVATE_KEY);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -111,6 +120,32 @@ public class WxAuthorizationUp {
         }
     }
 
+
+    /**
+     * 小程序调起支付签名
+     * https://pay.weixin.qq.com/doc/v3/merchant/4012365341
+     * @param ts
+     * @param nonceStr
+     * @param prepayId
+     * @return
+     */
+    public static String getSmallAppPaySign(long ts, String nonceStr,String prepayId){
+
+        StringBuffer sb = new StringBuffer();
+        sb.append(WxPayConstants.SMALL_APP_ID).append("\n")
+                .append(ts).append("\n")
+                .append(nonceStr).append("\n")
+                .append("prepay_id=").append(prepayId).append("\n");
+
+        byte[] b = new byte[0];
+        try {
+            b = sign256(sb.toString(),PRIVATE_KEY);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        String signStr = Base64.getEncoder().encodeToString(b);
+        return signStr;
+    }
     /**
      * 二进制数据编码为BASE64字符串
      * @param data
