@@ -1,6 +1,7 @@
 package com.ddbb.service.evaluation;
 
 import com.ddbb.controller.response.evaluation.HallEvalQueryResponse;
+import com.ddbb.infra.data.mongo.entity.HallAggregationResult;
 import com.ddbb.infra.data.mongo.entity.HallEvalEntity;
 import com.ddbb.infra.data.mongo.entity.UserEntity;
 import com.ddbb.infra.data.mongo.repo.HallEvalRepository;
@@ -68,5 +69,18 @@ public class HallEvalQueryService {
         result.setRecords(list);
         result.setTotalRecord(page.getTotalElements());
         return result;
+    }
+
+    public Double calculateDynamicScore(long hallId) {
+
+        HallAggregationResult aggregationResult = hallEvalRepository.sumAndCountByHallId(hallId);
+
+        if (null == aggregationResult) {
+            return 5.0;
+        }
+
+        double v = (aggregationResult.getSatisfaction() * 0.2 + aggregationResult.getEnvironment() * 0.2 + aggregationResult.getFacilities() * 0.1 + aggregationResult.getService() * 0.15 + aggregationResult.getAssistantScore()*0.2 + aggregationResult.getCostPerformance() * 0.15) / aggregationResult.getCount();
+
+        return Math.round(v * 100) / 100.0;
     }
 }
