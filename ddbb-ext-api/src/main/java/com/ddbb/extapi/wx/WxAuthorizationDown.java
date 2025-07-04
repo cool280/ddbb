@@ -1,20 +1,25 @@
 package com.ddbb.extapi.wx;
 
-import com.alibaba.fastjson.JSONObject;
+import com.ddbb.internal.utils.IVerifyResponseService;
+import com.ddbb.internal.utils.ObjectConverter;
 import com.ddbb.internal.utils.SnowflakeIdUtil;
+import lombok.Builder;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Response;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.security.*;
-import java.security.cert.CertificateException;
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.FileInputStream;
+import java.security.PublicKey;
+import java.security.Signature;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Base64;
 
 
@@ -26,15 +31,23 @@ import java.util.Base64;
  * https://blog.csdn.net/qq_43377237/article/details/103896951
  */
 @Slf4j
-public class WxAuthorizationDown {
+@Service
+public class WxAuthorizationDown implements IVerifyResponseService {
     private static final String ENCODING = "UTF-8";
     private static final String SIGNATURE_ALGORITHM = "SHA256withRSA";
 
-
+    private static PublicKey PUBLIC_KEY = null;
+    static {
+        try {
+            PUBLIC_KEY = getCerToPublicKey();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     /**
      * BEGIN CERTIFICATE格式解析密钥
      * @Return: java.security.PublicKey
-     */
+
     private static String getCerToPublicKey1() throws FileNotFoundException, CertificateException {
         FileInputStream file = new FileInputStream("D://publicKey.cer");
 
@@ -47,7 +60,7 @@ public class WxAuthorizationDown {
                 + "\n-----END PUBLIC KEY-----";
         System.out.println(strKey);
         return strKey;
-    }
+    }*/
 
     /**
      * 从微信商户平台上，下载的平台证书（api安全）
@@ -88,71 +101,195 @@ public class WxAuthorizationDown {
     }
 
     /**
-     * 验证微信接口响应
+     * 验签http的返回
+     *
      * @param response
      * @return
      */
-    public static boolean verifyWxResponse(Response response){
+    @Override
+    public Pair<Boolean, String> verifyResponse(Response response){
         try{
             //1、您应先检查 HTTP 头 Wechatpay-Serial 的内容是否跟商户当前所持有的微信支付平台证书的序列号一致
             String weChatpaySerial=response.header("Wechatpay-Serial");
-            if(!WxPayConstants.SERIAL_NO.equals(weChatpaySerial)){
-                return false;
+
+            //2、防【重放攻击】：在验证签名之前，商户系统应检查时间戳是否已过期。我们建议商户系统允许最多5分钟的时间偏差
+            //HTTP 头 Wechatpay-Timestamp 中的应答时间戳
+            String wxTs = response.header("Wechatpay-Timestamp");
+
+            //HTTP 头 Wechatpay-Nonce 中的应答随机串
+            String wxNonce = response.header("Wechatpay-Nonce");
+
+            String body = response.body().string();
+
+            //微信支付的应答签名通过 HTTP 头 Wechatpay-Signature 传递
+            String wxSignature = response.header("Wechatpay-Signature");
+
+            return doVerify(WxVerifyObject.builder().weChatpaySerial(weChatpaySerial)
+                    .wxTs(wxTs).wxNonce(wxNonce).body(body).wxSignature(wxSignature)
+                    .type(2).traceId(SnowflakeIdUtil.getInstance().nextId()).build());
+        }catch (Exception e){
+            log.error("verifyWxResponse error: "+e.getMessage(),e);
+        }
+
+        return NOT_PASS;
+    }
+    /*public Pair<Boolean, String> verifyResponse(Response response){
+        try{
+            //1、您应先检查 HTTP 头 Wechatpay-Serial 的内容是否跟商户当前所持有的微信支付平台证书的序列号一致
+            String weChatpaySerial=response.header("Wechatpay-Serial");
+            if(!WxPayConstants.WX_PLATFORM_SERIAL_NO.equals(weChatpaySerial)){
+                return NOT_PASS;
             }
-            //2、在验证签名之前，商户系统应检查时间戳是否已过期。我们建议商户系统允许最多5分钟的时间偏差
+            //2、防【重放攻击】：在验证签名之前，商户系统应检查时间戳是否已过期。我们建议商户系统允许最多5分钟的时间偏差
             //HTTP 头 Wechatpay-Timestamp 中的应答时间戳
             String wxTs = response.header("Wechatpay-Timestamp");
             if(StringUtils.isBlank(wxTs)){
-                return false;
+                return NOT_PASS;
             }
             long longWxTs = Long.parseLong(wxTs);
             long now = System.currentTimeMillis() / 1000;
 
             if(now < longWxTs || now - longWxTs > 300){
-                return false;
+                return NOT_PASS;
             }
             //HTTP 头 Wechatpay-Nonce 中的应答随机串
             String wxNonce = response.header("Wechatpay-Nonce");
 
+            String body = response.body().string();
             StringBuffer verifyData = new StringBuffer();
             verifyData.append(wxTs).append("\n")
                     .append(wxNonce).append("\n")
-                    .append(response.body().string()).append("\n");
+                    .append(body).append("\n");
 
             //微信支付的应答签名通过 HTTP 头 Wechatpay-Signature 传递
             String wxSignature = response.header("Wechatpay-Signature");
             //使用 base64 解码 Wechatpay-Signature 字段值，得到应答签名。
             byte[] wxSignatureDecodeByte = Base64.getDecoder().decode(wxSignature);
 
-            return verify256(verifyData.toString(),wxSignatureDecodeByte,getCerToPublicKey());
+            boolean b = verify256(verifyData.toString(),wxSignatureDecodeByte,PUBLIC_KEY);
+            if(b){
+                return Pair.of(true,body);
+            }
         }catch (Exception e){
             log.error("verifyWxResponse error: "+e.getMessage(),e);
-            return false;
         }
 
+        return NOT_PASS;
+    }*/
+
+    /**
+     * 验签微信主动回调
+     * @param request
+     * @return
+     */
+    @Override
+    public Pair<Boolean, String> verifyRequest(HttpServletRequest request) {
+        try{
+            //1、您应先检查 HTTP 头 Wechatpay-Serial 的内容是否跟商户当前所持有的微信支付平台证书的序列号一致
+            String weChatpaySerial=request.getHeader("Wechatpay-Serial");
+
+            //2、防【重放攻击】：在验证签名之前，商户系统应检查时间戳是否已过期。我们建议商户系统允许最多5分钟的时间偏差
+            //HTTP 头 Wechatpay-Timestamp 中的应答时间戳
+            String wxTs = request.getHeader("Wechatpay-Timestamp");
+
+            //HTTP 头 Wechatpay-Nonce 中的应答随机串
+            String wxNonce = request.getHeader("Wechatpay-Nonce");
+
+            String body = IOUtils.toString(request.getInputStream(), request.getCharacterEncoding());
+
+            //微信支付的应答签名通过 HTTP 头 Wechatpay-Signature 传递
+            String wxSignature = request.getHeader("Wechatpay-Signature");
+
+            return doVerify(WxVerifyObject.builder().weChatpaySerial(weChatpaySerial)
+                    .wxTs(wxTs).wxNonce(wxNonce).body(body).wxSignature(wxSignature)
+                    .type(1).traceId(SnowflakeIdUtil.getInstance().nextId()).build());
+        }catch (Exception e){
+            log.error("verifyWxRequest error: "+e.getMessage(),e);
+        }
+
+        return NOT_PASS;
     }
-    /**
-     * 二进制数据编码为BASE64字符串
-     * @param data
-     * @return
-     */
-//    public static String encodeBase64(byte[] bytes){
-//        return new String(Base64.encodeBase64(bytes));
-//    }
+
+    private Pair<Boolean, String> doVerify(WxVerifyObject obj){
+        long traceId = obj.getTraceId();
+        log.info("[doVerify] >>> traceId:{}, start: {}", traceId,ObjectConverter.o2s(obj));
+        try{
+            //1、您应先检查 HTTP 头 Wechatpay-Serial 的内容是否跟商户当前所持有的微信支付平台证书的序列号一致
+            String weChatpaySerial = obj.getWeChatpaySerial();
+            if(!WxPayConstants.WX_PLATFORM_SERIAL_NO.equals(weChatpaySerial)){
+                log.error("[doVerify] >>> traceId:{}, error: weChatpaySerial wrong",traceId);
+                return NOT_PASS;
+            }
+            //2、防【重放攻击】：在验证签名之前，商户系统应检查时间戳是否已过期。我们建议商户系统允许最多5分钟的时间偏差
+            //HTTP 头 Wechatpay-Timestamp 中的应答时间戳
+            String wxTs = obj.getWxTs();
+            if(StringUtils.isBlank(wxTs)){
+                log.error("[doVerify] >>> traceId:{}, error: wxTs is blank",traceId);
+                return NOT_PASS;
+            }
+            long longWxTs = Long.parseLong(wxTs);
+            long now = System.currentTimeMillis() / 1000;
+
+            if(now < longWxTs || now - longWxTs > 300){
+                log.error("[doVerify] >>> traceId:{}, error: wxTs wrong",traceId);
+                return NOT_PASS;
+            }
+            //HTTP 头 Wechatpay-Nonce 中的应答随机串
+            String wxNonce = obj.getWxNonce();
+
+            String body = obj.getBody();
+            StringBuffer verifyData = new StringBuffer();
+            verifyData.append(wxTs).append("\n")
+                    .append(wxNonce).append("\n")
+                    .append(body).append("\n");
+
+            //微信支付的应答签名通过 HTTP 头 Wechatpay-Signature 传递
+            String wxSignature = obj.getWxSignature();
+            //使用 base64 解码 Wechatpay-Signature 字段值，得到应答签名。
+            byte[] wxSignatureDecodeByte = Base64.getDecoder().decode(wxSignature);
+
+            boolean b = verify256(verifyData.toString(),wxSignatureDecodeByte,PUBLIC_KEY);
+            if(b){
+                log.info("[doVerify] >>> traceId:{}, success",traceId);
+                return Pair.of(true,body);
+            }
+            log.error("[doVerify] >>> traceId:{}, not pass",traceId);
+
+        }catch (Exception e){
+            log.error("doVerify error: "+e.getMessage(),e);
+        }
+
+        return NOT_PASS;
+    }
+
 
     /**
-     * BASE64解码
-     * @param bytes
-     * @return
-     */
-//    public static byte[] decodeBase64(byte[] bytes) {
-//        byte[] result = null;
-//        try {
-//            result = Base64.decodeBase64(bytes);
-//        } catch (Exception e) {
-//            return null;
-//        }
-//        return result;
-//    }
-
+     * 微信验签对象
+      */
+    @Data
+    @Builder
+    class WxVerifyObject{
+        /**
+         * 平台证书的序列号
+         */
+        private String weChatpaySerial;
+        /**
+         * 时间戳
+         */
+        private String wxTs;
+        /**
+         * 随机串
+         */
+        private String wxNonce;
+        /**
+         * wx的签名
+         */
+        private String wxSignature;
+        /**
+         * request或response中的body
+         */
+        private String body;
+        private Integer type;
+        private Long traceId;
+    }
 }
