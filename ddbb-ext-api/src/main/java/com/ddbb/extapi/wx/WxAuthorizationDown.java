@@ -10,17 +10,21 @@ import okhttp3.Response;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Base64;
+import java.util.Optional;
 
 
 /**
@@ -32,18 +36,14 @@ import java.util.Base64;
  */
 @Slf4j
 @Service
-public class WxAuthorizationDown implements IVerifyResponseService {
+public class WxAuthorizationDown implements IVerifyResponseService, InitializingBean {
     private static final String ENCODING = "UTF-8";
     private static final String SIGNATURE_ALGORITHM = "SHA256withRSA";
 
+    @Autowired
+    private WxConfig wxConfig;
+
     private static PublicKey PUBLIC_KEY = null;
-    static {
-        try {
-            PUBLIC_KEY = getCerToPublicKey();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
     /**
      * BEGIN CERTIFICATE格式解析密钥
      * @Return: java.security.PublicKey
@@ -67,8 +67,9 @@ public class WxAuthorizationDown implements IVerifyResponseService {
      * @return
      * @throws Exception
      */
-    private static PublicKey getCerToPublicKey() throws Exception {
-        File file = ResourceUtils.getFile("classpath:wechatpay_4E221BD0951FCC4D6F495E7037165D5A4D7F3381.pem");
+    private PublicKey getCerToPublicKey() throws Exception {
+        //File file = ResourceUtils.getFile("classpath:wechatpay_4E221BD0951FCC4D6F495E7037165D5A4D7F3381.pem");
+        File file = new File(wxConfig.getPemFolder()+"\\wechatpay_4E221BD0951FCC4D6F495E7037165D5A4D7F3381.pem");
         FileInputStream inputStream = new FileInputStream(file);
 
         CertificateFactory ft = CertificateFactory.getInstance("X.509");
@@ -179,6 +180,8 @@ public class WxAuthorizationDown implements IVerifyResponseService {
 
     /**
      * 验签微信主动回调
+     * 注意：使用了 @RequestBody 注解后，无法再通过IOUtils.toString()获取body，和response.body().string()一样
+     * 因此，无论是否使用了@RequestBody 注解，都要求调用方把body放在request.setAttribute("requestBodyXxx","...")中
      * @param request
      * @return
      */
@@ -194,9 +197,12 @@ public class WxAuthorizationDown implements IVerifyResponseService {
 
             //HTTP 头 Wechatpay-Nonce 中的应答随机串
             String wxNonce = request.getHeader("Wechatpay-Nonce");
-
-            String body = IOUtils.toString(request.getInputStream(), request.getCharacterEncoding());
-
+            //{"summary":"支付成功","event_type":"TRANSACTION.SUCCESS","create_time":"2025-07-05T03:47:11+08:00","resource":{"original_type":"transaction","algorithm":"AEAD_AES_256_GCM","ciphertext":"70DJY8uDO9MXDJBk3CjWt7lDbu83v+bpx7lG5VWYCwDTVw7NmGMCKTPoX4U+OhfiPyMLMx1IOvnjzHzeRklJ3DYCJrnfMo+VoaDJBkn5586Zefno/0CFhHJOC0lpPo88Iwm4z+896ITrxGTqiTfsfLxq/vfCYxlHB5QZ5a7L7aFm6E48hEsi6JeuVcU9/sWT8EtGCd7413gMKnYW+rGWzwmX2PJYMe3SAXNQF8IKYlhtxFKLIim0b1Zz63Ni9N1rHPwB5R9T6zJ5HmCEQgScl/zajth2aQ8Bg+adIRT5HO99EI3xbBd+MTAsk7gb66YLy0MXzWCb/YH/8n8V8QbwioAh9WXWkFjaK3OK4kxbVJmhc8PBrW6bWNN3eh4fUC3fSuQTPgwBm/Tdcta+m/pRPRs4KqpUOn6PJweGbvyk+pWhhMfXO3aNtGdwmaHi9CU438Y7EpjDdDNVHUXc3XfJMi5zZBtQYw872sd8VshOBCTK2joN0MIJxkYk7B7acZH2zePwWsWS27M7LVMuuA7bvidjTzwHl5ao60YexxL9h2B7UpBjj4i5EdMV8SgY042XCNRZqA==","associated_data":"transaction","nonce":"k2X2ESSWMuSk"},"resource_type":"encrypt-resource","id":"49bf0c81-5ca5-52f2-b16f-b7d50247c8dc"}
+            //String body = IOUtils.toString(request.getInputStream(), request.getCharacterEncoding());
+            String body = Optional.ofNullable(request.getAttribute("requestBodyXxx")).map(Object::toString).orElse("");
+            if(StringUtils.isBlank(body)){
+                throw new Exception("you must invoke request.setAttribute(\"requestBodyXxx\",\"...\")");
+            }
             //微信支付的应答签名通过 HTTP 头 Wechatpay-Signature 传递
             String wxSignature = request.getHeader("Wechatpay-Signature");
 
@@ -250,16 +256,25 @@ public class WxAuthorizationDown implements IVerifyResponseService {
 
             boolean b = verify256(verifyData.toString(),wxSignatureDecodeByte,PUBLIC_KEY);
             if(b){
-                log.info("[doVerify] >>> traceId:{}, success",traceId);
+                log.info("[doVerify] >>> traceId:{}, verify256 success",traceId);
                 return Pair.of(true,body);
             }
-            log.error("[doVerify] >>> traceId:{}, not pass",traceId);
+            log.error("[doVerify] >>> traceId:{}, verify256 failed - not pass",traceId);
 
         }catch (Exception e){
             log.error("doVerify error: "+e.getMessage(),e);
         }
 
         return NOT_PASS;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        try{
+            PUBLIC_KEY = getCerToPublicKey();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 

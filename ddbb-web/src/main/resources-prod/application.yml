@@ -55,3 +55,9 @@ ddbb:
     defaultWorkTimeStart: 14
     #默认下班时间
     defaultWorkTimeEnd: 22
+    #比赛开始前几小时内可签到
+    signInAheadHours: 2
+    #距离球房多少米内可签到
+    signInDistanceMi: 500
+  wx:
+    pemFolder: c:\ddbb_file

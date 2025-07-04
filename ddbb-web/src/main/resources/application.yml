@@ -56,3 +56,5 @@ ddbb:
     signInAheadHours: 2
     #距离球房多少米内可签到
     signInDistanceMi: 500
+  wx:
+    pemFolder: c:\ddbb_file

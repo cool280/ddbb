@@ -4,11 +4,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.ddbb.internal.utils.SnowflakeIdUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
@@ -22,17 +21,15 @@ import java.util.Base64;
  * https://pay.weixin.qq.com/doc/v3/merchant/4012365336
  */
 @Slf4j
-public class WxAuthorizationUp{
+@Service
+public class WxAuthorizationUp implements InitializingBean {
     private static final String ENCODING = "UTF-8";
     private static final String SIGNATURE_ALGORITHM = "SHA256withRSA";
+
+    @Autowired
+    private WxConfig wxConfig;
+
     private static PrivateKey PRIVATE_KEY = null;
-    static {
-        try {
-            PRIVATE_KEY = generatePrivateKey();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     public static String getAuthorization(String url, JSONObject bodyParam){
         Long ts = System.currentTimeMillis() / 1000;
@@ -61,9 +58,14 @@ public class WxAuthorizationUp{
         return ret.toString();
     }
 
-    private static PrivateKey generatePrivateKey() throws Exception {
+    private PrivateKey generatePrivateKey() throws Exception {
         // // Step 1: Read the content of the PEM file
-        InputStream inputStream = WxAuthorizationUp.class.getClassLoader().getResourceAsStream("wx_apiclient_key.pem");
+        //InputStream inputStream = WxAuthorizationUp.class.getClassLoader().getResourceAsStream("wx_apiclient_key.pem");
+
+        File file = new File(wxConfig.getPemFolder()+"\\wx_apiclient_key.pem");
+        FileInputStream inputStream = new FileInputStream(file);
+
+
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
         StringBuffer sb = new StringBuffer();
         String line;
@@ -145,6 +147,15 @@ public class WxAuthorizationUp{
         }
         String signStr = Base64.getEncoder().encodeToString(b);
         return signStr;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        try {
+            PRIVATE_KEY = generatePrivateKey();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     /**
      * 二进制数据编码为BASE64字符串
