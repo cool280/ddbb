@@ -2,6 +2,7 @@ package com.ddbb.test.evaluation;
 
 import com.ddbb.controller.request.evaluation.CoachEvalDimensionRequest;
 import com.ddbb.controller.request.evaluation.HallEvalDimensionRequest;
+import com.ddbb.infra.data.mongo.repo.CoachEvalRepository;
 import com.ddbb.service.evaluation.CoachEvalQueryService;
 import com.ddbb.service.evaluation.CoachEvalUpdateService;
 import com.ddbb.service.evaluation.HallEvalQueryService;
@@ -24,6 +25,9 @@ public class EvaluationServiceTest extends BaseTest {
 
     @Autowired
     private CoachEvalUpdateService coachEvalUpdateService;
+
+    @Autowired
+    private CoachEvalRepository coachEvalRepository;
 
 
     @Test
@@ -66,5 +70,13 @@ public class EvaluationServiceTest extends BaseTest {
         dimensionRequest.setChallengeId(RandomStringUtils.randomAlphanumeric(7)); //订单ID
 
         hallEvalUpdateService.addEvaluation(dimensionRequest);
+    }
+
+    @Test
+    public void testCalculateDynamicScore() {
+
+       double v=  coachEvalQueryService.calculateDynamicScore(65143423516446721L);
+
+        System.out.println();
     }
 }

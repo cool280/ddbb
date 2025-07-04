@@ -1,6 +1,7 @@
 package com.ddbb.service.evaluation;
 
 import com.ddbb.controller.response.evaluation.CoachEvalQueryResponse;
+import com.ddbb.infra.data.mongo.entity.CoachAggregationResult;
 import com.ddbb.infra.data.mongo.entity.CoachEvalEntity;
 import com.ddbb.infra.data.mongo.entity.UserEntity;
 import com.ddbb.infra.data.mongo.repo.CoachEvalRepository;
@@ -66,5 +67,18 @@ public class CoachEvalQueryService {
         result.setRecords(list);
         result.setTotalRecord(page.getTotalElements());
         return result;
+    }
+
+    public Double calculateDynamicScore(long coachUid) {
+
+        CoachAggregationResult aggregationResult = coachEvalRepository.sumAndCountByCoachUid(coachUid);
+
+        if (null == aggregationResult) {
+            return 5.0;
+        }
+
+        double v = (aggregationResult.getAppearance() * 0.25 + aggregationResult.getAttitude() * 0.25 + aggregationResult.getSkill() * 0.25 + aggregationResult.getSatisfaction() * 0.25) / aggregationResult.getCount();
+
+        return Math.round(v * 100) / 100.0;
     }
 }
